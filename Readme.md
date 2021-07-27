@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
-* Студент: [Sasha Proskurin](https://up.htmlacademy.ru/ecmascript/15/user/1681305).
-* Наставник: `Неизвестно`.
+* Студент: [Александр Проскурин](https://up.htmlacademy.ru/ecmascript/15/user/1681305).
+* Наставник: [Сергей Рожков](https://up.htmlacademy.ru/ecmascript/15/user/1069033).
 
 ---
 
