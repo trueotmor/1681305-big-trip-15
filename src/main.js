@@ -1,3 +1,4 @@
+import './view/temp/data.js';
 import {createTripInfo} from './view/trip-info.js';
 import {createTripRoute} from './view/trip-route.js';
 import {createTripCost} from './view/trip-cost.js';
@@ -8,13 +9,10 @@ import {createEmptyList} from './view/trip-list-empty.js';
 import {createNewPoint} from './view/trip-new-point.js';
 import {createEventList} from './view/trip-event-list.js';
 import {createEventItem} from './view/trip-event-item.js';
-import {createEventItemInner} from './view/trip-event-item-inner.js';
+import { randomRoute } from './view/temp/data.js';
+import { points } from './view/temp/data.js';
+import { render } from './utils/utils.js';
 
-import {createEditPoint} from './view/trip-edit-point.js';
-
-const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
 
 const siteHeaderelement = document.querySelector('.page-header');
 const siteMainelement = document.querySelector('.page-main');
@@ -31,25 +29,13 @@ render(tripTabs, createTripTabs(), 'beforeend');
 render(tripFilters, createTripFilters(), 'beforeend');
 
 render(tripEvts, createTripSort(), 'beforeend');
-render(tripEvts, createNewPoint(), 'beforeend');
+render(tripEvts, createNewPoint(points[0]), 'beforeend');
 createEmptyList();
-// render(tripEvts, createEmptyList(), 'beforeend');
 render(tripEvts, createEventList(), 'beforeend');
 
 const tripInfo = siteHeaderelement.querySelector('.trip-info');
 render(tripInfo, createTripRoute(), 'afterbegin');
 render(tripInfo, createTripCost(), 'beforeend');
 
-
 const tripList = siteMainelement.querySelector('.trip-events__list');
-render(tripList, createEventItem(), 'beforeend');
-render(tripList, createEventItem(), 'beforeend');
-render(tripList, createEventItem(), 'beforeend');
-render(tripList, createEventItem(), 'beforeend');
-
-const tripItem = siteMainelement.querySelectorAll('.trip-events__item');
-
-render(tripItem[0], createEditPoint(), 'afterbegin');
-render(tripItem[1], createEventItemInner(), 'beforeend');
-render(tripItem[2], createEventItemInner(), 'beforeend');
-render(tripItem[3], createEventItemInner(), 'beforeend');
+render(tripList, createEventItem(randomRoute), 'beforeend');
