@@ -1,7 +1,8 @@
 import { getRandomInteger } from '../utils/utils';
-import { waypointTypes } from './temp/data';
-import { towns } from './temp/data.js';
+import { getWaypointTypes } from '../utils/temp/data';
+import { getTowns } from '../utils/temp/data.js';
 import { humanizeTaskDate } from '../utils/utils';
+
 
 const createPhotos = (task) => {
   const {destination} =  task;
@@ -96,11 +97,11 @@ export const createNewPoint = (task) => {
   const {destination, dateFrom, dateTo, basePrice} =  task;
 
   const dateFromFormatted = dateFrom !== null
-    ? humanizeTaskDate(dateFrom, 'DD/MM/YY hh:mm')
+    ? humanizeTaskDate(dateFrom, 'full')
     : '';
 
   const dateToFormatted = dateTo !== null
-    ? humanizeTaskDate(dateTo, 'DD/MM/YY hh:mm')
+    ? humanizeTaskDate(dateTo, 'full')
     : '';
 
 
@@ -116,7 +117,7 @@ export const createNewPoint = (task) => {
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-          ${createTypes(waypointTypes, task)}
+          ${createTypes(getWaypointTypes(), task)}
         </fieldset>
       </div>
     </div>
@@ -127,7 +128,7 @@ export const createNewPoint = (task) => {
       </label>
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
       <datalist id="destination-list-1">
-        ${createDataListItems(towns)}
+        ${createDataListItems(getTowns())}
       </datalist>
     </div>
 

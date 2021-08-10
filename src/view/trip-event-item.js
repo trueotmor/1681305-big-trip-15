@@ -1,6 +1,8 @@
 import { createEditPoint } from './trip-edit-point.js';
 import { humanizeTaskDate } from '../utils/utils.js';
 import { dateDifference } from '../utils/utils.js';
+
+
 const createOffers = (task) => {
   let items = '';
   for (const item of task.offers) {
@@ -17,22 +19,22 @@ const createOffers = (task) => {
 const createEventItemInner = (obj) => {
   const {dateFrom, dateTo, type, basePrice, destination} = obj;
   const dateFromTypeOne = dateFrom !== null
-    ? humanizeTaskDate(dateFrom, 'YYYY-MM-DD')
+    ? humanizeTaskDate(dateFrom, 'common')
     : '';
   const dateFromTypeTwo = dateFrom !== null
-    ? humanizeTaskDate(dateFrom, 'MMM DD')
+    ? humanizeTaskDate(dateFrom, 'short')
     : '';
   const timeFrom = dateFrom !== null
-    ? humanizeTaskDate(dateFrom, 'hh:mm')
+    ? humanizeTaskDate(dateFrom, 'short')
     : '';
   const dateToTypeOne = dateTo !== null
-    ? humanizeTaskDate(dateTo, 'YYYY-MM-DD')
+    ? humanizeTaskDate(dateTo, 'common')
     : '';
   const dateToTypeTwo = dateTo !== null
-    ? humanizeTaskDate(dateTo, 'MMM DD')
+    ? humanizeTaskDate(dateTo, 'short')
     : '';
   const timeTo = dateTo !== null
-    ? humanizeTaskDate(dateTo, 'hh:mm')
+    ? humanizeTaskDate(dateTo, 'short')
     : '';
   const duration = dateDifference(dateTo, dateFrom, 'hour');
 

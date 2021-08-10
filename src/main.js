@@ -1,4 +1,3 @@
-import './view/temp/data.js';
 import {createTripInfo} from './view/trip-info.js';
 import {createTripRoute} from './view/trip-route.js';
 import {createTripCost} from './view/trip-cost.js';
@@ -9,9 +8,13 @@ import {createEmptyList} from './view/trip-list-empty.js';
 import {createNewPoint} from './view/trip-new-point.js';
 import {createEventList} from './view/trip-event-list.js';
 import {createEventItem} from './view/trip-event-item.js';
-import { randomRoute } from './view/temp/data.js';
-import { points } from './view/temp/data.js';
+import { getRandomRoute } from './utils/temp/data.js';
+import { getPoints } from './utils/temp/data.js';
 import { render } from './utils/utils.js';
+
+
+const points = getPoints();
+const randomRoute = getRandomRoute(points);
 
 
 const siteHeaderelement = document.querySelector('.page-header');

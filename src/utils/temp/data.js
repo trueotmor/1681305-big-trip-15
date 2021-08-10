@@ -1,12 +1,9 @@
 import dayjs from 'dayjs';
-import { getRandomElement } from '../../utils/utils.js';
-import { getRndArr } from '../../utils/utils.js';
-import { getRandomInteger } from '../../utils/utils.js';
+import { getRandomElement } from '../utils.js';
+import { getRndArr } from '../utils.js';
+import { getRandomInteger } from '../utils.js';
 
-const duration = require('dayjs/plugin/duration');
-dayjs.extend(duration);
-dayjs.duration(100);
-
+const DEFAULT_DURATION = 100;
 
 const MIN_PHOTOS_COUNT = 1;
 const MAX_PHOTOS_COUNT = 5;
@@ -26,8 +23,11 @@ const MAX_DURATION = 3;
 
 const POINTS_LENGTH = 20;
 
+const duration = require('dayjs/plugin/duration');
+dayjs.extend(duration);
+dayjs.duration(DEFAULT_DURATION);
 
-export const waypointTypes = new Set ([
+const waypointTypes = new Set ([
   'Taxi',
   'Bus',
   'Train',
@@ -39,9 +39,10 @@ export const waypointTypes = new Set ([
   'Restaurant',
 ]);
 const genegateWaypointType = () => getRandomElement(waypointTypes);
+export const getWaypointTypes = () => waypointTypes;
 
 
-export const towns = new Set ([
+const towns = new Set ([
   'Tegucigalpa',
   'San Pedro Sula',
   'Choloma',
@@ -54,7 +55,7 @@ export const towns = new Set ([
   'Danlí',
 ]);
 const generateDestination= () => getRandomElement(towns);
-
+export const getTowns = () => towns;
 
 const abouts = new Set ([
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -141,7 +142,6 @@ for(let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
     name: generateDestination(),
     pictures : generatePhotos(),
   };
-  const id = actionIndex;
   const generatePoint = () => {
     const dateFrom = generateDate(today, maxDay);
     const dateTo = generateDate(dateFrom, maxDay);
@@ -149,7 +149,7 @@ for(let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
       basePrice : getRandomInteger(MIN_BASE_PRICE, MAX_BASE_PRICE),
       dateFrom: dateFrom.toDate(),
       dateTo: dateTo.toDate(),
-      id,
+      id : actionIndex,
       isFavorite : Boolean(getRandomInteger(0, 1)),
       type: genegateWaypointType(),
       destination,
@@ -160,4 +160,6 @@ for(let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
   points.push(generatePoint());
 }
 
-export const randomRoute = getRndArr(points);
+export const getPoints = () => points;
+
+export const getRandomRoute = (routePoints) => getRndArr(routePoints);

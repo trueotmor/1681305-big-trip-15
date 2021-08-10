@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
-import { randomRoute } from './temp/data.js';
+import { getRandomRoute } from '../utils/temp/data.js';
+import { getPoints } from '../utils/temp/data.js';
+const randomRoute = getRandomRoute(getPoints());
 
 export const createTripRoute = () => {
   const routeDateFrom = randomRoute[0].dateFrom !== null ? dayjs(randomRoute[0].dateFrom).format('MMM DD') : '';
