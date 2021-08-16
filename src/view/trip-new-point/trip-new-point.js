@@ -1,7 +1,7 @@
-import { createElement } from '../utils/utils';
-import { getWaypointTypes } from '../utils/temp/data';
-import { getTowns } from '../utils/temp/data.js';
-import { humanizeTaskDate } from '../utils/utils';
+import { createElement } from '../../utils/utils.js';
+import { getWaypointTypes } from '../../utils/temp/data.js';
+import { getTowns } from '../../utils/temp/data.js';
+import { humanizeTaskDate } from '../../utils/utils.js';
 
 const createTypes = (set, task) => {
   let items = '';
@@ -25,7 +25,7 @@ const createDataListItems = (set) => {
   return items;
 };
 
-const createEditPoint = (task) => {
+const createNewPoint = (task) => {
   const typeValue = task.type.toLowerCase();
   const typeKey = task.type;
 
@@ -37,9 +37,7 @@ const createEditPoint = (task) => {
   const dateToFormatted =
     dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
 
-  return `
-  <li class="trip-events__item">
-  <form class="event event--edit" action="#" method="post">
+  return `<form class="event event--edit" action="#" method="post">
   <header class="event__header">
     <div class="event__type-wrapper">
       <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -85,23 +83,19 @@ const createEditPoint = (task) => {
     </div>
 
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Delete</button>
-    <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-    </button>
+    <button class="event__reset-btn" type="reset">Cancel</button>
   </header>
-</form>
-</li>`;
+</form>`;
 };
 
-export default class EditPoint {
+export default class NewPoint {
   constructor(task) {
     this._task = task;
     this._element = null;
   }
 
   getTemplate() {
-    return createEditPoint(this._task);
+    return createNewPoint(this._task);
   }
 
   getElement() {

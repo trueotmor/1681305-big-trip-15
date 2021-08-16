@@ -16,18 +16,18 @@ const MAX_OFFER_PRICE = 100;
 
 const MAX_OPTIONS_TYPES = 5;
 
-const MIN_BASE_PRICE =50;
-const MAX_BASE_PRICE =200;
+const MIN_BASE_PRICE = 50;
+const MAX_BASE_PRICE = 200;
 
 const MAX_DURATION = 3;
 
-const POINTS_LENGTH = 20;
+const POINTS_LENGTH = 0;
 
 const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
 dayjs.duration(DEFAULT_DURATION);
 
-const waypointTypes = new Set ([
+const waypointTypes = new Set([
   'Taxi',
   'Bus',
   'Train',
@@ -41,8 +41,7 @@ const waypointTypes = new Set ([
 const genegateWaypointType = () => getRandomElement(waypointTypes);
 export const getWaypointTypes = () => waypointTypes;
 
-
-const towns = new Set ([
+const towns = new Set([
   'Tegucigalpa',
   'San Pedro Sula',
   'Choloma',
@@ -54,10 +53,10 @@ const towns = new Set ([
   'La Lima',
   'Danlí',
 ]);
-const generateDestination= () => getRandomElement(towns);
+const generateDestination = () => getRandomElement(towns);
 export const getTowns = () => towns;
 
-const abouts = new Set ([
+const abouts = new Set([
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
   'Fusce tristique felis at fermentum pharetra.',
@@ -70,8 +69,8 @@ const abouts = new Set ([
   'Nunc fermentum tortor ac porta dapibus.',
   'In rutrum ac purus sit amet tempus.',
 ]);
-const generateDescription= () => getRndArr(abouts, MAX_ABOUT_LENGTH, MIN_ABOUT_LENGTH ).join(' ');
-
+const generateDescription = () =>
+  getRndArr(abouts, MAX_ABOUT_LENGTH, MIN_ABOUT_LENGTH).join(' ');
 
 const options = [
   {
@@ -116,7 +115,6 @@ const options = [
   },
 ];
 
-
 const generatePhotos = () => {
   const photosCount = getRandomInteger(MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT);
   const photosArray = [];
@@ -127,7 +125,6 @@ const generatePhotos = () => {
   return photosArray;
 };
 
-
 const today = dayjs();
 const maxDay = dayjs(today).add(MAX_DURATION, 'day');
 const generateDate = (from, to) => {
@@ -136,25 +133,25 @@ const generateDate = (from, to) => {
 };
 
 export const points = [];
-for(let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
+for (let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
   const destination = {
-    description : generateDescription(),
+    description: generateDescription(),
     name: generateDestination(),
-    pictures : generatePhotos(),
+    pictures: generatePhotos(),
   };
   const generatePoint = () => {
     const dateFrom = generateDate(today, maxDay);
     const dateTo = generateDate(dateFrom, maxDay);
-    const point ={
-      basePrice : getRandomInteger(MIN_BASE_PRICE, MAX_BASE_PRICE),
+    const point = {
+      basePrice: getRandomInteger(MIN_BASE_PRICE, MAX_BASE_PRICE),
       dateFrom: dateFrom.toDate(),
       dateTo: dateTo.toDate(),
-      id : actionIndex,
-      isFavorite : Boolean(getRandomInteger(0, 1)),
+      id: actionIndex,
+      isFavorite: Boolean(getRandomInteger(0, 1)),
       type: genegateWaypointType(),
       destination,
     };
-    point.offers = options.filter((e) => (e.type.includes(point.type)));
+    point.offers = options.filter((e) => e.type.includes(point.type));
     return point;
   };
   points.push(generatePoint());
