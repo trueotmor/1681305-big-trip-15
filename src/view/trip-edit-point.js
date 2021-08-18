@@ -1,7 +1,7 @@
-import { createElement } from '../utils/utils';
 import { getWaypointTypes } from '../utils/temp/data';
 import { getTowns } from '../utils/temp/data.js';
 import { humanizeTaskDate } from '../utils/utils';
+import AbstractView from './abstract';
 
 const createTypes = (set, task) => {
   let items = '';
@@ -31,11 +31,9 @@ const createEditPoint = (task) => {
 
   const { destination, dateFrom, dateTo, basePrice } = task;
 
-  const dateFromFormatted =
-    dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
+  const dateFromFormatted = dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
 
-  const dateToFormatted =
-    dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
+  const dateToFormatted = dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
 
   return `
   <li class="trip-events__item">
@@ -94,25 +92,13 @@ const createEditPoint = (task) => {
 </li>`;
 };
 
-export default class EditPoint {
+export default class EditPoint extends AbstractView {
   constructor(task) {
+    super();
     this._task = task;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditPoint(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

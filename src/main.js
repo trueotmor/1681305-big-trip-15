@@ -1,20 +1,13 @@
 import { getPoints, getRandomRoute } from './utils/temp/data.js';
-import { render, renderPosition } from './utils/utils.js';
+import { render, renderPosition, replace } from './utils/utils.js';
 
 import TripFiltersView from './view/trip-filters.js';
 import TripTabsView from './view/trip-tabs.js';
 import TripSortView from './view/trip-sort.js';
-import TripCostView from './view/trip-info/trip-cost.js';
-import TripRouteView from './view/trip-info/trip-route.js';
-import TripEventList from './view/trip-events-container.js';
-import TripEventView from './view/trip-events.js';
-import TripInfoContainerView from './view/trip-info/trip-info-container';
-import NewPointView from './view/trip-new-point/trip-new-point.js';
-import PointDetailsContainerView from './view/trip-new-point/trip-new-point-details-container.js';
-import PointOffersView from './view/trip-new-point/trip-new-point-offers.js';
-import EditPointView from './view/trip-edit-point.js';
-import TripDescriptionView from './view/trip-new-point/trip-new-point-description.js';
-import TripPicturesView from './view/trip-new-point/trip-pictures.js';
+import TripEventListView from './view/trip-event/trip-events-list.js';
+import TripEventView from './view/trip-event/trip-event.js';
+import TripInfoView from './view/trip-info/trip-info';
+import PointFormView from './view/trip-point-form/trip-point-form.js';
 import TripEmptyListMessageView from './view/trip-list-empty.js';
 
 const points = getPoints();
@@ -22,109 +15,46 @@ const formPoint = points[0];
 const randomRoute = getRandomRoute(points);
 
 // Existing markup
-const siteHeaderelement = document.querySelector('.page-header');
-const siteMainelement = document.querySelector('.page-main');
-const tripMain = siteHeaderelement.querySelector('.trip-main');
-const tripTabs = siteHeaderelement.querySelector('.trip-controls__navigation');
-const tripFilters = siteHeaderelement.querySelector('.trip-controls__filters');
-const tripEvts = siteMainelement.querySelector('.trip-events');
+const pageHeaderElement = document.querySelector('.page-header');
+const pageMainElement = document.querySelector('.page-main');
+const tripMainElement = pageHeaderElement.querySelector('.trip-main');
+const tripTabsElement = pageHeaderElement.querySelector('.trip-controls__navigation');
+const tripFiltersElement = pageHeaderElement.querySelector('.trip-controls__filters');
+const tripEventsElement = pageMainElement.querySelector('.trip-events');
 
 // Route info: route , total price, dates.
-const infoComponent = new TripInfoContainerView();
-render(tripMain, infoComponent.getElement(), renderPosition.AFTERBEGIN);
-render(
-  infoComponent.getElement(),
-  new TripRouteView(randomRoute).getElement(),
-  renderPosition.AFTERBEGIN,
-);
-render(infoComponent.getElement(), new TripCostView(randomRoute).getElement());
+const infoComponent = new TripInfoView(randomRoute);
+render(tripMainElement, infoComponent.getElement(), renderPosition.AFTERBEGIN);
 
 // Menu
-render(tripTabs, new TripTabsView().getElement());
+render(tripTabsElement, new TripTabsView().getElement());
 
 // Filters
-render(tripFilters, new TripFiltersView().getElement());
-
-// Sort
-render(tripEvts, new TripSortView().getElement());
+render(tripFiltersElement, new TripFiltersView().getElement());
 
 // New point form
-const tripNewPointComponent = new NewPointView(formPoint);
-const tripNewPointDetailsContainer = new PointDetailsContainerView();
-const tripNewPointDescription = new TripDescriptionView(formPoint);
-render(tripEvts, tripNewPointComponent.getElement());
-render(
-  tripNewPointComponent.getElement(),
-  tripNewPointDetailsContainer.getElement(),
-);
-render(
-  tripNewPointDetailsContainer.getElement(),
-  new PointOffersView(formPoint).getElement(),
-  renderPosition.AFTERBEGIN,
-);
-render(
-  tripNewPointDetailsContainer.getElement(),
-  tripNewPointDescription.getElement(),
-);
-render(
-  tripNewPointDescription.getElement(),
-  new TripPicturesView(formPoint).getElement(),
-);
+const tripPointComponent = new PointFormView(formPoint);
+render(tripEventsElement, tripPointComponent.getElement());
 
 // Events
 
-// const replaceFormToEvent = (container, element) => {
-//   const currentElement = element.getElement();
-//   element.removeElement();
-//   container.replaceChild(element.getElement(), currentElement);
-// };
+// if (points.length === 0) {
+//   render(tripEventsElement, new TripEmptyListMessageView().getElement());
+// }
 
-// const replaceEventToForm = (container, event, form) => {
-//   event.getElement().innerHTML = '';
-//   render(event.getElement(), form.getElement());
+// const tripEventList = new TripEventListView(randomRoute);
+// render(tripEventsElement, tripEventList.getElement());
 
-//   event
-//     .getElement()
-//     .querySelector('form')
-//     .addEventListener('submit', (evt) => {
-//       evt.preventDefault();
-//       replaceFormToEvent(container, event);
-//     });
-// };
-
-const getEditComponent = (component, event) => {
-  const tripEditPointDetailsContainer = new PointDetailsContainerView();
-  const tripEditPointDescription = new TripDescriptionView(event);
-  const form = component.getElement().firstElementChild;
-  render(form, tripEditPointDetailsContainer.getElement());
-  render(
-    tripEditPointDetailsContainer.getElement(),
-    new PointOffersView(event).getElement(),
-    renderPosition.AFTERBEGIN,
-  );
-  render(
-    tripEditPointDetailsContainer.getElement(),
-    tripEditPointDescription.getElement(),
-  );
-};
-
-const renderEvent = (eventListElement, event) => {
+const renderEvent = (eventsListContainer, event) => {
   const eventComponent = new TripEventView(event);
-  const eventEditComponent = new EditPointView(event);
+  const eventFormComponent = new PointFormView(event);
 
   const replaceEventToForm = () => {
-    eventListElement.replaceChild(
-      eventEditComponent.getElement(),
-      eventComponent.getElement(),
-    );
-    getEditComponent(eventEditComponent, event);
+    replace(eventFormComponent, eventComponent);
   };
 
   const replaceFormToEvent = () => {
-    eventListElement.replaceChild(
-      eventComponent.getElement(),
-      eventEditComponent.getElement(),
-    );
+    replace(eventComponent, eventFormComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -143,7 +73,7 @@ const renderEvent = (eventListElement, event) => {
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-  eventEditComponent
+  eventFormComponent
     .getElement()
     .querySelector('form')
     .addEventListener('submit', (evt) => {
@@ -152,7 +82,7 @@ const renderEvent = (eventListElement, event) => {
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-  eventEditComponent
+  eventFormComponent
     .getElement()
     .querySelector('.event__rollup-btn')
     .addEventListener('click', () => {
@@ -160,16 +90,20 @@ const renderEvent = (eventListElement, event) => {
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-  render(eventListElement, eventComponent.getElement());
+  render(eventsListContainer, eventComponent.getElement());
 };
 
-if (points.length === 0) {
-  render(tripEvts, new TripEmptyListMessageView().getElement());
-}
+const renderRoute = (routeContainer, events) => {
+  if (points.length === 0) {
+    render(routeContainer, new TripEmptyListMessageView());
+  } else {
+    render(routeContainer, new TripSortView());
+    const eventsListComponent = new TripEventListView(events);
+    render(routeContainer, eventsListComponent);
+    // for (let i = 0; i < events.length; i++) {
+    //   renderEvent(eventsListComponent, events[i]);
+    // }
+  }
+};
 
-const tripEventList = new TripEventList();
-
-render(tripEvts, tripEventList.getElement());
-for (const point of randomRoute) {
-  renderEvent(tripEventList.getElement(), point);
-}
+renderRoute(tripEventsElement, points);

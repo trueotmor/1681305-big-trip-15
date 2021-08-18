@@ -1,13 +1,9 @@
-import { createElement } from '../../utils/utils';
+import AbstractView from '../abstract';
 
 const createPictures = (task) => {
   const { destination } = task;
   let items = '';
-  for (
-    let actionIndex = 0;
-    actionIndex < destination.pictures.length;
-    actionIndex++
-  ) {
+  for (let actionIndex = 0; actionIndex < destination.pictures.length; actionIndex++) {
     items += `<img class="event__photo" src="${destination.pictures[actionIndex]}" alt="Event photo">`;
   }
   return items;
@@ -25,25 +21,13 @@ const createPicturesContainer = (task) => {
   }
 };
 
-export default class TripPictures {
+export default class PointPictures extends AbstractView {
   constructor(task) {
+    super();
     this._task = task;
-    this._element = null;
   }
 
   getTemplate() {
     return createPicturesContainer(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import Abstract from '../view/abstract';
 
 const dateFormats = new Map([
   ['full', 'DD/MM/YY hh:mm'],
@@ -14,11 +15,14 @@ export const renderPosition = {
   AFTEREND: 'afterend',
 };
 
-export const render = (
-  container,
-  element,
-  place = renderPosition.BEFOREEND,
-) => {
+export const render = (container, element, place = renderPosition.BEFOREEND) => {
+  if (container instanceof Abstract) {
+    container = container.getElement();
+  }
+
+  if (element instanceof Abstract) {
+    element = element.getElement();
+  }
   switch (place) {
     case renderPosition.BEFOREEND:
       container.append(element);
@@ -34,9 +38,6 @@ export const render = (
       break;
   }
 };
-
-// export const render = (container, template, place = renderPosition.BEFOREEND) =>
-//   container.insertAdjacentHTML(place, template);
 
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
@@ -96,5 +97,30 @@ export const humanizeTaskDate = (taskDate, format = 'common') => {
   return dayjs(taskDate).format(format);
 };
 
-export const dateDifference = (startDate, endDate, timeFormat) =>
-  dayjs(startDate).diff(endDate, timeFormat);
+export const dateDifference = (startDate, endDate, timeFormat) => dayjs(startDate).diff(endDate, timeFormat);
+
+export const replace = (newChild, oldChild) => {
+  if (oldChild instanceof Abstract) {
+    oldChild = oldChild.getElement();
+  }
+
+  if (newChild instanceof Abstract) {
+    newChild = newChild.getElement();
+  }
+  const parent = oldChild.parentElement;
+
+  if (parent === null || oldChild === null || newChild === null) {
+    throw new Error('Cant replace unexisting elements');
+  }
+
+  parent.replaceChild(newChild, oldChild);
+};
+
+export const remove = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error('Can remove only components');
+  }
+
+  component.getElement().remove();
+  component.removeElement();
+};

@@ -1,7 +1,9 @@
-import { createElement } from '../../utils/utils.js';
 import { getWaypointTypes } from '../../utils/temp/data.js';
 import { getTowns } from '../../utils/temp/data.js';
 import { humanizeTaskDate } from '../../utils/utils.js';
+
+import PointDetailsView from './trip-point-details.js';
+import AbstractView from '../abstract.js';
 
 const createTypes = (set, task) => {
   let items = '';
@@ -25,17 +27,18 @@ const createDataListItems = (set) => {
   return items;
 };
 
-const createNewPoint = (task) => {
+const createPoint = (task) => {
+  if (task === undefined || null) {
+    return '';
+  }
   const typeValue = task.type.toLowerCase();
   const typeKey = task.type;
 
   const { destination, dateFrom, dateTo, basePrice } = task;
 
-  const dateFromFormatted =
-    dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
+  const dateFromFormatted = dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
 
-  const dateToFormatted =
-    dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
+  const dateToFormatted = dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
 
   return `<form class="event event--edit" action="#" method="post">
   <header class="event__header">
@@ -58,9 +61,8 @@ const createNewPoint = (task) => {
       <label class="event__label  event__type-output" for="event-destination-1">
         ${typeKey}
       </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${
-        destination.name
-      }" list="destination-list-1">
+      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
+        value="${destination.name}" list="destination-list-1">
       <datalist id="destination-list-1">
         ${createDataListItems(getTowns())}
       </datalist>
@@ -85,28 +87,17 @@ const createNewPoint = (task) => {
     <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
     <button class="event__reset-btn" type="reset">Cancel</button>
   </header>
+  ${new PointDetailsView(task).getTemplate()}
 </form>`;
 };
 
-export default class NewPoint {
+export default class TripPointForm extends AbstractView {
   constructor(task) {
+    super();
     this._task = task;
-    this._element = null;
   }
 
   getTemplate() {
-    return createNewPoint(this._task);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createPoint(this._task);
   }
 }

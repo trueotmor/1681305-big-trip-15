@@ -1,6 +1,6 @@
-import { createElement } from '../utils/utils';
-import { humanizeTaskDate } from '../utils/utils';
-import { dateDifference } from '../utils/utils';
+import { humanizeTaskDate } from '../../utils/utils';
+import { dateDifference } from '../../utils/utils';
+import AbstractView from '../abstract';
 
 const createOffers = (task) => {
   let items = '';
@@ -17,15 +17,11 @@ const createOffers = (task) => {
 
 const createEventItemInner = (obj) => {
   const { dateFrom, dateTo, type, basePrice, destination } = obj;
-  const dateFromTypeOne =
-    dateFrom !== null ? humanizeTaskDate(dateFrom, 'common') : '';
-  const dateFromTypeTwo =
-    dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
+  const dateFromTypeOne = dateFrom !== null ? humanizeTaskDate(dateFrom, 'common') : '';
+  const dateFromTypeTwo = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
   const timeFrom = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
-  const dateToTypeOne =
-    dateTo !== null ? humanizeTaskDate(dateTo, 'common') : '';
-  const dateToTypeTwo =
-    dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
+  const dateToTypeOne = dateTo !== null ? humanizeTaskDate(dateTo, 'common') : '';
+  const dateToTypeTwo = dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
   const timeTo = dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
   const duration = dateDifference(dateTo, dateFrom, 'hour');
 
@@ -62,28 +58,13 @@ const createEventItemInner = (obj) => {
 </div>`;
 };
 
-const createEventItem = (point) =>
-  `<li class="trip-events__item">${createEventItemInner(point)}</li>`;
-
-export default class TripEvent {
+export default class TripEvent extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
   }
 
   getTemplate() {
-    return createEventItem(this._point);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+    return createEventItemInner(this._point);
   }
 }

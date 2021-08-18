@@ -21,38 +21,17 @@ const MAX_BASE_PRICE = 200;
 
 const MAX_DURATION = 3;
 
-const POINTS_LENGTH = 0;
+const POINTS_LENGTH = 20;
 
 const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
 dayjs.duration(DEFAULT_DURATION);
 
-const waypointTypes = new Set([
-  'Taxi',
-  'Bus',
-  'Train',
-  'Ship',
-  'Drive',
-  'Flight',
-  'Check-in',
-  'Sightseeing',
-  'Restaurant',
-]);
+const waypointTypes = new Set(['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant']);
 const genegateWaypointType = () => getRandomElement(waypointTypes);
 export const getWaypointTypes = () => waypointTypes;
 
-const towns = new Set([
-  'Tegucigalpa',
-  'San Pedro Sula',
-  'Choloma',
-  'La Ceiba',
-  'El Progreso',
-  'Choluteca',
-  'Comayagua',
-  'Puerto Cortés',
-  'La Lima',
-  'Danlí',
-]);
+const towns = new Set(['Tegucigalpa', 'San Pedro Sula', 'Choloma', 'La Ceiba', 'El Progreso', 'Choluteca', 'Comayagua', 'Puerto Cortés', 'La Lima', 'Danlí']);
 const generateDestination = () => getRandomElement(towns);
 export const getTowns = () => towns;
 
@@ -69,8 +48,7 @@ const abouts = new Set([
   'Nunc fermentum tortor ac porta dapibus.',
   'In rutrum ac purus sit amet tempus.',
 ]);
-const generateDescription = () =>
-  getRndArr(abouts, MAX_ABOUT_LENGTH, MIN_ABOUT_LENGTH).join(' ');
+const generateDescription = () => getRndArr(abouts, MAX_ABOUT_LENGTH, MIN_ABOUT_LENGTH).join(' ');
 
 const options = [
   {
