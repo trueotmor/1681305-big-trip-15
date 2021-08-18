@@ -1,13 +1,12 @@
 import { getPoints, getRandomRoute } from './utils/temp/data.js';
-import { render, renderPosition, replace } from './utils/utils.js';
+import { render, renderPosition } from './utils/utils.js';
 
 import TripFiltersView from './view/trip-filters.js';
 import TripTabsView from './view/trip-tabs.js';
 import TripSortView from './view/trip-sort.js';
 import TripEventListView from './view/trip-event/trip-events-list.js';
-import TripEventView from './view/trip-event/trip-event.js';
 import TripInfoView from './view/trip-info/trip-info';
-import PointFormView from './view/trip-point-form/trip-point-form.js';
+import TripPointFormView from './view/trip-point-form/trip-point-form.js';
 import TripEmptyListMessageView from './view/trip-list-empty.js';
 
 const points = getPoints();
@@ -33,65 +32,10 @@ render(tripTabsElement, new TripTabsView().getElement());
 render(tripFiltersElement, new TripFiltersView().getElement());
 
 // New point form
-const tripPointComponent = new PointFormView(formPoint);
-render(tripEventsElement, tripPointComponent.getElement());
+// const tripPointComponent = new TripPointFormView(formPoint);
+// render(tripEventsElement, tripPointComponent.getElement());
 
 // Events
-
-// if (points.length === 0) {
-//   render(tripEventsElement, new TripEmptyListMessageView().getElement());
-// }
-
-// const tripEventList = new TripEventListView(randomRoute);
-// render(tripEventsElement, tripEventList.getElement());
-
-const renderEvent = (eventsListContainer, event) => {
-  const eventComponent = new TripEventView(event);
-  const eventFormComponent = new PointFormView(event);
-
-  const replaceEventToForm = () => {
-    replace(eventFormComponent, eventComponent);
-  };
-
-  const replaceFormToEvent = () => {
-    replace(eventComponent, eventFormComponent);
-  };
-
-  const onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      replaceFormToEvent();
-      document.removeEventListener('keydown', onEscKeyDown);
-    }
-  };
-
-  eventComponent
-    .getElement()
-    .querySelector('.event__rollup-btn')
-    .addEventListener('click', () => {
-      replaceEventToForm();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-  eventFormComponent
-    .getElement()
-    .querySelector('form')
-    .addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      replaceFormToEvent();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-  eventFormComponent
-    .getElement()
-    .querySelector('.event__rollup-btn')
-    .addEventListener('click', () => {
-      replaceFormToEvent();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-  render(eventsListContainer, eventComponent.getElement());
-};
 
 const renderRoute = (routeContainer, events) => {
   if (points.length === 0) {
@@ -99,11 +43,8 @@ const renderRoute = (routeContainer, events) => {
   } else {
     render(routeContainer, new TripSortView());
     const eventsListComponent = new TripEventListView(events);
-    render(routeContainer, eventsListComponent);
-    // for (let i = 0; i < events.length; i++) {
-    //   renderEvent(eventsListComponent, events[i]);
-    // }
+    render(routeContainer, eventsListComponent.getElement());
   }
 };
 
-renderRoute(tripEventsElement, points);
+renderRoute(tripEventsElement, randomRoute);
