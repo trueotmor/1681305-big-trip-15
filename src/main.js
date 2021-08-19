@@ -6,11 +6,11 @@ import TripTabsView from './view/trip-tabs.js';
 import TripSortView from './view/trip-sort.js';
 import TripEventListView from './view/trip-event/trip-events-list.js';
 import TripInfoView from './view/trip-info/trip-info';
-import TripPointFormView from './view/trip-point-form/trip-point-form.js';
+// import TripPointFormView from './view/trip-point-form/trip-point-form.js';
 import TripEmptyListMessageView from './view/trip-list-empty.js';
 
 const points = getPoints();
-const formPoint = points[0];
+// const formPoint = points[0];
 const randomRoute = getRandomRoute(points);
 
 // Existing markup
