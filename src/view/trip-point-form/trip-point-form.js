@@ -1,15 +1,13 @@
-import { getWaypointTypes } from '../../utils/temp/data.js';
-import { getTowns } from '../../utils/temp/data.js';
+import { getTowns, getWaypointTypes } from '../../utils/temp/data.js';
 import { humanizeTaskDate } from '../../utils/utils.js';
 
 import PointDetailsView from './trip-point-details.js';
 import AbstractView from '../abstract.js';
 
-const createTypes = (set, task) => {
+const createTypesTemplate = (set, task) => {
   let items = '';
   for (const item of set) {
-    let checked = '';
-    task.type === item ? (checked = 'checked') : checked;
+    const checked = task.type === item ? 'checked' : '';
     items += `
       <div class="event__type-item">
         <input id="event-type-${item.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.toLowerCase()}"${checked}>
@@ -19,7 +17,7 @@ const createTypes = (set, task) => {
   return items;
 };
 
-const createDataListItems = (set) => {
+const createDataListItemsTemplate = (set) => {
   let items = '';
   for (const item of set) {
     items += `<option value="${item}"></option>`;
@@ -27,14 +25,28 @@ const createDataListItems = (set) => {
   return items;
 };
 
-const createPoint = (task) => {
-  if (task === undefined || null) {
+const createButtonsTemplate = (id) => {
+  if (id) {
+    return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+      <button class="event__reset-btn" type="reset">Delete</button>
+      <button class="event__rollup-btn" type="button">
+      <span class="visually-hidden">Open event</span>
+  </button>`;
+  } else {
+    return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+    <button class="event__reset-btn" type="reset">Cancel</button>`;
+  }
+};
+
+const createPointTemplate = (point) => {
+  const { id } = point;
+  if (point === undefined || null) {
     return '';
   }
-  const typeValue = task.type.toLowerCase();
-  const typeKey = task.type;
+  const typeValue = point.type.toLowerCase();
+  const typeKey = point.type;
 
-  const { destination, dateFrom, dateTo, basePrice } = task;
+  const { destination, dateFrom, dateTo, basePrice } = point;
 
   const dateFromFormatted = dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
 
@@ -52,7 +64,7 @@ const createPoint = (task) => {
       <div class="event__type-list">
         <fieldset class="event__type-group">
           <legend class="visually-hidden">Event type</legend>
-          ${createTypes(getWaypointTypes(), task)}
+          ${createTypesTemplate(getWaypointTypes(), point)}
         </fieldset>
       </div>
     </div>
@@ -64,7 +76,7 @@ const createPoint = (task) => {
       <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
         value="${destination.name}" list="destination-list-1">
       <datalist id="destination-list-1">
-        ${createDataListItems(getTowns())}
+        ${createDataListItemsTemplate(getTowns())}
       </datalist>
     </div>
 
@@ -84,20 +96,20 @@ const createPoint = (task) => {
       <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
     </div>
 
-    <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Cancel</button>
+    ${createButtonsTemplate(id)}
+
   </header>
-  ${new PointDetailsView(task).getTemplate()}
+  ${new PointDetailsView(point).getTemplate()}
 </form>`;
 };
 
-export default class TripPointForm extends AbstractView {
+export default class TripPointFormView extends AbstractView {
   constructor(task) {
     super();
     this._task = task;
   }
 
   getTemplate() {
-    return createPoint(this._task);
+    return createPointTemplate(this._task);
   }
 }

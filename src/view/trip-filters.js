@@ -1,6 +1,6 @@
 import AbstractView from './abstract.js';
 
-const createTripFilters = () =>
+const createTripFiltersTemplate = () =>
   `<form class="trip-filters" action="#" method="get">
   <div class="trip-filters__filter">
     <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
@@ -20,8 +20,8 @@ const createTripFilters = () =>
   <button class="visually-hidden" type="submit">Accept filter</button>
   </form>`;
 
-export default class TripFilters extends AbstractView {
+export default class TripFiltersView extends AbstractView {
   getTemplate() {
-    return createTripFilters();
+    return createTripFiltersTemplate();
   }
 }

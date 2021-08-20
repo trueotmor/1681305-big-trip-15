@@ -1,7 +1,7 @@
 import { humanizeTaskDate } from '../../utils/utils.js';
 import AbstractView from '../abstract.js';
 
-const createTripRoute = (route) => {
+const createTripRouteTemplate = (route) => {
   if (route.length === 0) {
     return '';
   }
@@ -16,13 +16,13 @@ const createTripRoute = (route) => {
   </div>`;
 };
 
-export default class TripRoute extends AbstractView {
+export default class TripRouteView extends AbstractView {
   constructor(route) {
     super();
     this._route = route;
   }
 
   getTemplate() {
-    return createTripRoute(this._route);
+    return createTripRouteTemplate(this._route);
   }
 }

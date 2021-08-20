@@ -15,18 +15,18 @@ const calculateTotalPrice = (route) => {
   return totalPrice;
 };
 
-const createTripCost = (route) =>
+const createTripCostTemplate = (route) =>
   `<p class="trip-info__cost">
   Total: &euro;&nbsp;<span class="trip-info__cost-value">${calculateTotalPrice(route)}</span>
 </p>`;
 
-export default class TripCost extends AbstractView {
+export default class TripCostView extends AbstractView {
   constructor(route) {
     super();
     this._route = route;
   }
 
   getTemplate() {
-    return createTripCost(this._route);
+    return createTripCostTemplate(this._route);
   }
 }

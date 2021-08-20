@@ -2,7 +2,7 @@ import { humanizeTaskDate } from '../../utils/utils';
 import { dateDifference } from '../../utils/utils';
 import AbstractView from '../abstract';
 
-const createOffers = (task) => {
+const createOffersTemplate = (task) => {
   let items = '';
   for (const item of task.offers) {
     items += `
@@ -15,7 +15,7 @@ const createOffers = (task) => {
   return items;
 };
 
-const createEventItemInner = (obj) => {
+const createEventItemInnerTemplate = (obj) => {
   const { dateFrom, dateTo, type, basePrice, destination } = obj;
   const dateFromTypeOne = dateFrom !== null ? humanizeTaskDate(dateFrom, 'common') : '';
   const dateFromTypeTwo = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
@@ -44,7 +44,7 @@ const createEventItemInner = (obj) => {
   </p>
   <h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-    ${createOffers(obj)}
+    ${createOffersTemplate(obj)}
   </ul>
   <button class="event__favorite-btn" type="button">
     <span class="visually-hidden">Add to favorite</span>
@@ -58,13 +58,13 @@ const createEventItemInner = (obj) => {
 </div>`;
 };
 
-export default class TripEvent extends AbstractView {
+export default class TripEventView extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
   }
 
   getTemplate() {
-    return createEventItemInner(this._point);
+    return createEventItemInnerTemplate(this._point);
   }
 }

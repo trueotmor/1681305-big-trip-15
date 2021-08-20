@@ -1,7 +1,7 @@
 import AbstractView from '../abstract';
 import PointPicturesView from './trip-pictures';
 
-const createDescription = (task) => {
+const createDescriptionTemplate = (task) => {
   if (task.destination.description === '' && task.destination.pictures.length === 0) {
     return '';
   } else {
@@ -13,13 +13,13 @@ const createDescription = (task) => {
   }
 };
 
-export default class PointDescription extends AbstractView {
+export default class PointDescriptionView extends AbstractView {
   constructor(task) {
     super();
     this._task = task;
   }
 
   getTemplate() {
-    return createDescription(this._task);
+    return createDescriptionTemplate(this._task);
   }
 }
