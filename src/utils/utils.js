@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import Abstract from '../view/abstract';
 
 const dateFormats = new Map([
   ['full', 'DD/MM/YY hh:mm'],
@@ -7,37 +6,6 @@ const dateFormats = new Map([
   ['short', 'MMM DD'],
   ['time', 'hh:mm'],
 ]);
-
-export const renderPosition = {
-  BEFOREEND: 'beforeend',
-  BEFOREBEGIN: 'beforebegin',
-  AFTERBEGIN: 'afterbegin',
-  AFTEREND: 'afterend',
-};
-
-export const render = (container, element, place = renderPosition.BEFOREEND) => {
-  if (container instanceof Abstract) {
-    container = container.getElement();
-  }
-
-  if (element instanceof Abstract) {
-    element = element.getElement();
-  }
-  switch (place) {
-    case renderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    case renderPosition.BEFOREBEGIN:
-      container.before(element);
-      break;
-    case renderPosition.AFTERBEGIN:
-      container.prepend(element);
-      break;
-    case renderPosition.AFTEREND:
-      container.after(element);
-      break;
-  }
-};
 
 // Функция из интернета по генерации случайного числа из диапазона
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
@@ -83,13 +51,6 @@ export const getRandomElement = (iterable) => {
   return clonedData[randomIndex];
 };
 
-export const createElement = (template) => {
-  const newElement = document.createElement('div');
-  newElement.innerHTML = template;
-
-  return newElement.firstElementChild;
-};
-
 export const humanizeTaskDate = (taskDate, format = 'common') => {
   if (dateFormats.has(format)) {
     format = dateFormats.get(format);
@@ -98,29 +59,3 @@ export const humanizeTaskDate = (taskDate, format = 'common') => {
 };
 
 export const dateDifference = (startDate, endDate, timeFormat) => dayjs(startDate).diff(endDate, timeFormat);
-
-export const replace = (newChild, oldChild) => {
-  if (oldChild instanceof Abstract) {
-    oldChild = oldChild.getElement();
-  }
-
-  if (newChild instanceof Abstract) {
-    newChild = newChild.getElement();
-  }
-  const parent = oldChild.parentElement;
-
-  if (parent === null || oldChild === null || newChild === null) {
-    throw new Error('Cant replace unexisting elements');
-  }
-
-  parent.replaceChild(newChild, oldChild);
-};
-
-export const remove = (component) => {
-  if (!(component instanceof Abstract)) {
-    throw new Error('Can remove only components');
-  }
-
-  component.getElement().remove();
-  component.removeElement();
-};

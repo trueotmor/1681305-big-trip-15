@@ -1,5 +1,5 @@
 import { getPoints, getRandomRoute } from './utils/temp/data.js';
-import { render, renderPosition } from './utils/utils.js';
+import { renderPosition, render } from './utils/render.js';
 
 import TripFiltersView from './view/trip-filters.js';
 import TripTabsView from './view/trip-tabs.js';
@@ -22,18 +22,16 @@ const tripFiltersElement = pageHeaderElement.querySelector('.trip-controls__filt
 const tripEventsElement = pageMainElement.querySelector('.trip-events');
 
 // Route info: route , total price, dates.
-const infoComponent = new TripInfoView(randomRoute);
-render(tripMainElement, infoComponent.getElement(), renderPosition.AFTERBEGIN);
+render(tripMainElement, new TripInfoView(randomRoute), renderPosition.AFTERBEGIN);
 
 // Menu
-render(tripTabsElement, new TripTabsView().getElement());
+render(tripTabsElement, new TripTabsView());
 
 // Filters
-render(tripFiltersElement, new TripFiltersView().getElement());
+render(tripFiltersElement, new TripFiltersView());
 
 // New point form
-const tripPointComponent = new TripPointFormView(formPoint);
-render(tripEventsElement, tripPointComponent.getElement());
+render(tripEventsElement, new TripPointFormView(formPoint));
 
 // Events
 
@@ -42,8 +40,7 @@ const renderRoute = (routeContainer, events) => {
     render(routeContainer, new TripEmptyListMessageView());
   } else {
     render(routeContainer, new TripSortView());
-    const eventsListComponent = new TripEventListView(events);
-    render(routeContainer, eventsListComponent.getElement());
+    render(routeContainer, new TripEventListView(events));
   }
 };
 

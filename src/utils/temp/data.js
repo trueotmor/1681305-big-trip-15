@@ -137,4 +137,4 @@ for (let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
 
 export const getPoints = () => points;
 
-export const getRandomRoute = (routePoints) => getRndArr(routePoints);
+export const getRandomRoute = (routePoints) => getRndArr(routePoints.slice(1));

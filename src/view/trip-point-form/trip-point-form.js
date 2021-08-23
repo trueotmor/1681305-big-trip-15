@@ -4,10 +4,10 @@ import { humanizeTaskDate } from '../../utils/utils.js';
 import PointDetailsView from './trip-point-details.js';
 import AbstractView from '../abstract.js';
 
-const createTypesTemplate = (set, task) => {
+const createTypesTemplate = (set, point) => {
   let items = '';
   for (const item of set) {
-    const checked = task.type === item ? 'checked' : '';
+    const checked = point.type === item ? 'checked' : '';
     items += `
       <div class="event__type-item">
         <input id="event-type-${item.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.toLowerCase()}"${checked}>
@@ -103,12 +103,12 @@ const createPointTemplate = (point) => {
 };
 
 export default class TripPointFormView extends AbstractView {
-  constructor(task) {
+  constructor(point) {
     super();
-    this._task = task;
+    this._point = point;
   }
 
   getTemplate() {
-    return createPointTemplate(this._task);
+    return createPointTemplate(this._point);
   }
 }

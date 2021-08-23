@@ -1,7 +1,7 @@
 import AbstractView from '../abstract';
 import TripEventView from './trip-event.js';
 import TripPointFormView from '../trip-point-form/trip-point-form';
-import { render, createElement } from '../../utils/utils';
+import { createElement, render } from '../../utils/render.js';
 
 const createEventListTemplate = () => '<ul class="trip-events__list"></ul>';
 
@@ -29,7 +29,7 @@ export default class TripEventListView extends AbstractView {
   renderEvent(point) {
     const liElement = createElement('<li class="trip-events__item"></li>');
     const tripEvent = new TripEventView(point);
-    render(liElement, tripEvent.getElement());
+    render(liElement, tripEvent);
 
     liElement.querySelector('.event__rollup-btn').addEventListener('click', () => {
       liElement.replaceWith(this.renderForm(point));
@@ -41,7 +41,7 @@ export default class TripEventListView extends AbstractView {
   renderForm(point) {
     const liElement = createElement('<li class="trip-events__item"></li>');
     const tripForm = new TripPointFormView(point);
-    render(liElement, tripForm.getElement());
+    render(liElement, tripForm);
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
