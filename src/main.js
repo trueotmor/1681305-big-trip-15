@@ -38,7 +38,7 @@ render(tripEventsElement, tripPointComponent.getElement());
 // Events
 
 const renderRoute = (routeContainer, events) => {
-  if (points.length === 0) {
+  if (events.length === 0) {
     render(routeContainer, new TripEmptyListMessageView());
   } else {
     render(routeContainer, new TripSortView());

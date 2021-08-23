@@ -39,14 +39,13 @@ const createButtonsTemplate = (id) => {
 };
 
 const createPointTemplate = (point) => {
-  const { id } = point;
   if (point === undefined || null) {
     return '';
   }
   const typeValue = point.type.toLowerCase();
   const typeKey = point.type;
 
-  const { destination, dateFrom, dateTo, basePrice } = point;
+  const { destination, dateFrom, dateTo, basePrice, id } = point;
 
   const dateFromFormatted = dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
 

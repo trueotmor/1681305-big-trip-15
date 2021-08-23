@@ -1,8 +1,7 @@
 import AbstractView from '../abstract';
 import TripEventView from './trip-event.js';
 import TripPointFormView from '../trip-point-form/trip-point-form';
-import { render } from '../../utils/utils';
-import { createElement } from '../../utils/utils';
+import { render, createElement } from '../../utils/utils';
 
 const createEventListTemplate = () => '<ul class="trip-events__list"></ul>';
 
