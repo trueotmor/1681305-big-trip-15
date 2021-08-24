@@ -19,45 +19,45 @@ export default class TripEventListView extends AbstractView {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
       for (const point of this._points) {
-        render(this._element, this.renderEvent(point));
+        render(this._element, this._renderEvent(point));
       }
     }
 
     return this._element;
   }
 
-  renderEvent(point) {
+  _renderEvent(point) {
     const liElement = createElement('<li class="trip-events__item"></li>');
     const tripEvent = new TripEventView(point);
     render(liElement, tripEvent);
 
     liElement.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      liElement.replaceWith(this.renderForm(point));
+      liElement.replaceWith(this._renderForm(point));
     });
 
     return liElement;
   }
 
-  renderForm(point) {
+  _renderForm(point) {
     const liElement = createElement('<li class="trip-events__item"></li>');
     const tripForm = new TripPointFormView(point);
     render(liElement, tripForm);
     const onEscKeyDown = (evt) => {
       if (evt.key === 'Escape' || evt.key === 'Esc') {
         evt.preventDefault();
-        liElement.replaceWith(this.renderEvent(point));
+        liElement.replaceWith(this._renderEvent(point));
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
     liElement.querySelector('form').addEventListener('submit', (evt) => {
       evt.preventDefault();
-      liElement.replaceWith(this.renderEvent(point));
+      liElement.replaceWith(this._renderEvent(point));
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
     liElement.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      liElement.replaceWith(this.renderEvent(point));
+      liElement.replaceWith(this._renderEvent(point));
       document.removeEventListener('keydown', onEscKeyDown);
     });
     document.addEventListener('keydown', onEscKeyDown);

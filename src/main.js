@@ -34,7 +34,6 @@ render(tripFiltersElement, new TripFiltersView());
 render(tripEventsElement, new TripPointFormView(formPoint));
 
 // Events
-
 const renderRoute = (routeContainer, events) => {
   if (events.length === 0) {
     render(routeContainer, new TripEmptyListMessageView());
