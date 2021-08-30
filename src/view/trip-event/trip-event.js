@@ -15,8 +15,8 @@ const createOffersTemplate = (task) => {
   return items;
 };
 
-const createEventItemInnerTemplate = (obj) => {
-  const { dateFrom, dateTo, type, basePrice, destination } = obj;
+const createEventItemInnerTemplate = (point) => {
+  const { dateFrom, dateTo, type, basePrice, destination, isFavorite } = point;
   const dateFromTypeOne = dateFrom !== null ? humanizeTaskDate(dateFrom, 'common') : '';
   const dateFromTypeTwo = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
   const timeFrom = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
@@ -24,6 +24,8 @@ const createEventItemInnerTemplate = (obj) => {
   const dateToTypeTwo = dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
   const timeTo = dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
   const duration = dateDifference(dateTo, dateFrom, 'hour');
+
+  const favoriteIsActive = isFavorite ? 'event__favorite-btn--active' : '';
 
   return `<div class="event">
   <time class="event__date" datetime="${dateFromTypeOne}">${dateFromTypeTwo}</time>
@@ -44,9 +46,9 @@ const createEventItemInnerTemplate = (obj) => {
   </p>
   <h4 class="visually-hidden">Offers:</h4>
   <ul class="event__selected-offers">
-    ${createOffersTemplate(obj)}
+    ${createOffersTemplate(point)}
   </ul>
-  <button class="event__favorite-btn" type="button">
+  <button class="event__favorite-btn ${favoriteIsActive}" type="button">
     <span class="visually-hidden">Add to favorite</span>
     <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
       <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"/>
