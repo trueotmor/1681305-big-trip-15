@@ -51,64 +51,88 @@ const createPointTemplate = (point) => {
 
   const dateToFormatted = dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
 
-  return `<form class="event event--edit" action="#" method="post">
-  <header class="event__header">
-    <div class="event__type-wrapper">
-      <label class="event__type  event__type-btn" for="event-type-toggle-1">
-        <span class="visually-hidden">Choose event type</span>
-        <img class="event__type-icon" width="17" height="17" src="img/icons/${typeValue}.png" alt="Event type icon">
-      </label>
-      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+  return `<li class="trip-events__item">
+    <form class="event event--edit" action="#" method="post">
+    <header class="event__header">
+      <div class="event__type-wrapper">
+        <label class="event__type  event__type-btn" for="event-type-toggle-1">
+          <span class="visually-hidden">Choose event type</span>
+          <img class="event__type-icon" width="17" height="17" src="img/icons/${typeValue}.png" alt="Event type icon">
+        </label>
+        <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
-      <div class="event__type-list">
-        <fieldset class="event__type-group">
-          <legend class="visually-hidden">Event type</legend>
-          ${createTypesTemplate(getWaypointTypes(), point)}
-        </fieldset>
+        <div class="event__type-list">
+          <fieldset class="event__type-group">
+            <legend class="visually-hidden">Event type</legend>
+            ${createTypesTemplate(getWaypointTypes(), point)}
+          </fieldset>
+        </div>
       </div>
-    </div>
 
-    <div class="event__field-group  event__field-group--destination">
-      <label class="event__label  event__type-output" for="event-destination-1">
-        ${typeKey}
-      </label>
-      <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-        value="${destination.name}" list="destination-list-1">
-      <datalist id="destination-list-1">
-        ${createDataListItemsTemplate(getTowns())}
-      </datalist>
-    </div>
+      <div class="event__field-group  event__field-group--destination">
+        <label class="event__label  event__type-output" for="event-destination-1">
+          ${typeKey}
+        </label>
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
+          value="${destination.name}" list="destination-list-1">
+        <datalist id="destination-list-1">
+          ${createDataListItemsTemplate(getTowns())}
+        </datalist>
+      </div>
 
-    <div class="event__field-group  event__field-group--time">
-      <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFromFormatted}">
-      &mdash;
-      <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateToFormatted}">
-    </div>
+      <div class="event__field-group  event__field-group--time">
+        <label class="visually-hidden" for="event-start-time-1">From</label>
+        <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dateFromFormatted}">
+        &mdash;
+        <label class="visually-hidden" for="event-end-time-1">To</label>
+        <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dateToFormatted}">
+      </div>
 
-    <div class="event__field-group  event__field-group--price">
-      <label class="event__label" for="event-price-1">
-        <span class="visually-hidden">Price</span>
-        &euro;
-      </label>
-      <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
-    </div>
+      <div class="event__field-group  event__field-group--price">
+        <label class="event__label" for="event-price-1">
+          <span class="visually-hidden">Price</span>
+          &euro;
+        </label>
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+      </div>
 
-    ${createButtonsTemplate(id)}
+      ${createButtonsTemplate(id)}
 
-  </header>
-  ${new PointDetailsView(point).getTemplate()}
-</form>`;
+    </header>
+    ${new PointDetailsView(point).getTemplate()}
+    </form>
+  </li>`;
 };
 
 export default class TripPointFormView extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formEditHandler = this._formEditHandler.bind(this);
   }
 
   getTemplate() {
     return createPointTemplate(this._point);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit(this._point);
+  }
+
+  _formEditHandler(evt) {
+    evt.preventDefault();
+    this._callback.edit();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form.event--edit').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setFormEditHandler(callback) {
+    this._callback.edit = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formEditHandler);
   }
 }
