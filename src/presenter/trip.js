@@ -5,7 +5,7 @@ import TripInfoView from '../view/trip-info/trip-info.js';
 import TripTabsView from '../view/trip-tabs.js';
 import TripFiltersView from '../view/trip-filters.js';
 import TripPointFormView from '../view/trip-point-form/trip-point-form.js';
-import TripPointPresenter from './point.js';
+import TripPointPresenter from './trip-point.js';
 
 import { render, renderPosition } from '../utils/render.js';
 import { dateDifference, updateItem } from '../utils/utils.js';
@@ -43,7 +43,7 @@ export default class Trip {
     this._points = points.slice();
     this._renderHeader();
     this._renderRoute();
-    // this._renderNewPointForm();
+    this._renderNewPointForm();
   }
 
   _sortEvents(sortType) {

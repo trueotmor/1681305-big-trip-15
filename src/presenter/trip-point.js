@@ -61,9 +61,7 @@ export default class TripPoint {
 
     if (this._mode === Mode.DEFAULT) {
       replace(this._eventComponent, prevEventComponent);
-    }
-
-    if (this._mode === Mode.EDITING) {
+    } else {
       replace(this._formComponent, prevFormComponent);
     }
 
