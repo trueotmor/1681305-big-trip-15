@@ -1,8 +1,30 @@
+import flatpickr from 'flatpickr';
+require('flatpickr/dist/themes/material_blue.css');
+
 import { getTowns, getWaypointTypes } from '../../utils/temp/data.js';
-import { humanizeTaskDate } from '../../utils/utils.js';
+import { humanizePointDate } from '../../utils/utils.js';
 
 import PointDetailsView from './trip-point-details.js';
-import AbstractView from '../abstract.js';
+import SmartView from '../smart.js';
+
+import { destinations, offers } from '../../utils/temp/data.js';
+
+import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
+import dayjs from 'dayjs';
+
+const BLANK_POINT = {
+  type: 'bus',
+  basePrice: 0,
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate(),
+  offers: [],
+  destination: {
+    name: 'Please select a destination',
+    description: '',
+    pictures: [],
+  },
+  isFavotite: false,
+};
 
 const createTypesTemplate = (set, point) => {
   let items = '';
@@ -38,18 +60,18 @@ const createButtonsTemplate = (id) => {
   }
 };
 
-const createPointTemplate = (point) => {
-  if (point === undefined || null) {
+const createPointTemplate = (data) => {
+  if (data === undefined || null) {
     return '';
   }
-  const typeValue = point.type.toLowerCase();
-  const typeKey = point.type;
+  const typeValue = data.type.toLowerCase();
+  const typeKey = data.type;
 
-  const { destination, dateFrom, dateTo, basePrice, id } = point;
+  const { destination, dateFrom, dateTo, basePrice, id } = data;
 
-  const dateFromFormatted = dateFrom !== null ? humanizeTaskDate(dateFrom, 'full') : '';
+  const dateFromFormatted = dateFrom !== null ? humanizePointDate(dateFrom, 'full') : '';
 
-  const dateToFormatted = dateTo !== null ? humanizeTaskDate(dateTo, 'full') : '';
+  const dateToFormatted = dateTo !== null ? humanizePointDate(dateTo, 'full') : '';
 
   return `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -64,7 +86,7 @@ const createPointTemplate = (point) => {
         <div class="event__type-list">
           <fieldset class="event__type-group">
             <legend class="visually-hidden">Event type</legend>
-            ${createTypesTemplate(getWaypointTypes(), point)}
+            ${createTypesTemplate(getWaypointTypes(), data)}
           </fieldset>
         </div>
       </div>
@@ -99,26 +121,159 @@ const createPointTemplate = (point) => {
       ${createButtonsTemplate(id)}
 
     </header>
-    ${new PointDetailsView(point).getTemplate()}
+    ${new PointDetailsView(data).getTemplate()}
     </form>
   </li>`;
 };
 
-export default class TripPointFormView extends AbstractView {
-  constructor(point) {
+export default class TripPointFormView extends SmartView {
+  constructor(point = BLANK_POINT) {
     super();
-    this._point = point;
+    this._data = TripPointFormView.parsePointToData(point);
+
+    this._dateFromPicker = null;
+    this._dateToPicker = null;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formEditHandler = this._formEditHandler.bind(this);
+
+    this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._typeToggleHandler = this._typeToggleHandler.bind(this);
+    this._townToggleHandler = this._townToggleHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
+
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
+
+    this._setInnerHandlers();
+
+    this._setDateFromPicker();
+    this._setDateToPicker();
   }
 
   getTemplate() {
-    return createPointTemplate(this._point);
+    return createPointTemplate(this._data);
+  }
+
+  reset(point) {
+    this.updateData(TripPointFormView.parsePointToData(point));
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this._setDateFromPicker();
+    this._setDateToPicker();
+
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormEditHandler(this._callback.edit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceInputHandler);
+    this.getElement().querySelector('.event__type-group').addEventListener('change', this._typeToggleHandler);
+    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offerChangeHandler);
+    this.getElement().querySelector('#event-destination-1').addEventListener('change', this._townToggleHandler);
+  }
+
+  _setDateFromPicker() {
+    if (this._dateFromPicker) {
+      this._dateFromPicker.destroy();
+      this._dateFromPicker = null;
+    }
+
+    this._dateFromPicker = flatpickr(this.getElement().querySelector('#event-start-time-1'), {
+      enableTime: true,
+      dateFormat: 'd/m/y H:i',
+      defaultDate: this._data.dateFrom,
+      maxDate: this._data.dateTo,
+      ['time_24hr']: true,
+      onClose: this._dateFromChangeHandler,
+    });
+  }
+
+  _setDateToPicker() {
+    if (this._dateToPicker) {
+      this._dateToPicker.destroy();
+      this._dateToPicker = null;
+    }
+
+    this._dateToPicker = flatpickr(this.getElement().querySelector('#event-end-time-1'), {
+      enableTime: true,
+      dateFormat: 'd/m/y H:i',
+      defaultDate: this._data.dateTo,
+      minDate: this._data.dateFrom,
+      ['time_24hr']: true,
+      onClose: this._dateToChangeHandler,
+    });
+  }
+
+  _dateFromChangeHandler([userDateFrom]) {
+    this.updateData({
+      dateFrom: userDateFrom,
+    });
+  }
+
+  _dateToChangeHandler([userDateTo]) {
+    this.updateData({
+      dateTo: userDateTo,
+    });
+  }
+
+  _offerChangeHandler(evt) {
+    evt.preventDefault();
+    if (evt.target.checked) {
+      const currentOffers = offers.get(this._data.type.toLowerCase());
+      for (const offer of currentOffers) {
+        if (offer.title === evt.target.value) {
+          this._data.offers.push(offer);
+          break;
+        }
+      }
+    } else {
+      let actionIndex = 0;
+      for (const offer of this._data.offers) {
+        if (offer.title === evt.target.value) {
+          this._data.offers.splice(actionIndex, 1);
+          break;
+        }
+        actionIndex++;
+      }
+    }
+
+    this.updateData();
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData(
+      {
+        basePrice: Number(evt.target.value) && Number(evt.target.value) > 0 ? Number(evt.target.value) : 0,
+      },
+      true,
+    );
+  }
+
+  _typeToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.value,
+      offers: [],
+    });
+  }
+
+  _townToggleHandler(evt) {
+    evt.preventDefault();
+    if ([...getTowns()].indexOf(evt.target.value) !== -1) {
+      this.updateData({
+        destination: destinations.get(evt.target.value),
+      });
+    }
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._point);
+    this._callback.formSubmit(TripPointFormView.parseDataToPoint(this._data));
   }
 
   _formEditHandler(evt) {
@@ -134,5 +289,14 @@ export default class TripPointFormView extends AbstractView {
   setFormEditHandler(callback) {
     this._callback.edit = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formEditHandler);
+  }
+
+  static parsePointToData(point) {
+    return Object.assign({}, point);
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+    return data;
   }
 }

@@ -1,10 +1,10 @@
-import { humanizeTaskDate } from '../../utils/utils';
+import { humanizePointDate } from '../../utils/utils';
 import { dateDifference } from '../../utils/utils';
 import AbstractView from '../abstract';
 
-const createOffersTemplate = (task) => {
+const createOffersTemplate = (point) => {
   let items = '';
-  for (const item of task.offers) {
+  for (const item of point.offers) {
     items += `
       <li class="event__offer">
         <span class="event__offer-title">${item.title}</span>
@@ -17,12 +17,12 @@ const createOffersTemplate = (task) => {
 
 const createEventItemInnerTemplate = (point) => {
   const { dateFrom, dateTo, type, basePrice, destination, isFavorite } = point;
-  const dateFromTypeOne = dateFrom !== null ? humanizeTaskDate(dateFrom, 'common') : '';
-  const dateFromTypeTwo = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
-  const timeFrom = dateFrom !== null ? humanizeTaskDate(dateFrom, 'short') : '';
-  const dateToTypeOne = dateTo !== null ? humanizeTaskDate(dateTo, 'common') : '';
-  const dateToTypeTwo = dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
-  const timeTo = dateTo !== null ? humanizeTaskDate(dateTo, 'short') : '';
+  const dateFromTypeOne = dateFrom !== null ? humanizePointDate(dateFrom, 'common') : '';
+  const dateFromTypeTwo = dateFrom !== null ? humanizePointDate(dateFrom, 'short') : '';
+  const timeFrom = dateFrom !== null ? humanizePointDate(dateFrom, 'short') : '';
+  const dateToTypeOne = dateTo !== null ? humanizePointDate(dateTo, 'common') : '';
+  const dateToTypeTwo = dateTo !== null ? humanizePointDate(dateTo, 'short') : '';
+  const timeTo = dateTo !== null ? humanizePointDate(dateTo, 'short') : '';
   const duration = dateDifference(dateTo, dateFrom, 'hour');
 
   const favoriteIsActive = isFavorite ? 'event__favorite-btn--active' : '';

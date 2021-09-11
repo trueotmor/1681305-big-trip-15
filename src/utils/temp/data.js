@@ -14,10 +14,11 @@ const MAX_ABOUT_LENGTH = 5;
 const MIN_OFFER_PRICE = 10;
 const MAX_OFFER_PRICE = 100;
 
-const MAX_OPTIONS_TYPES = 5;
-
 const MIN_BASE_PRICE = 50;
 const MAX_BASE_PRICE = 200;
+
+const MIN_OPTIONS_COUNT = 0;
+const MAX_OPTIONS_COUNT = 5;
 
 const MAX_DURATION = 3;
 
@@ -26,14 +27,6 @@ const POINTS_LENGTH = 20;
 const duration = require('dayjs/plugin/duration');
 dayjs.extend(duration);
 dayjs.duration(DEFAULT_DURATION);
-
-const waypointTypes = new Set(['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant']);
-const genegateWaypointType = () => getRandomElement(waypointTypes);
-export const getWaypointTypes = () => waypointTypes;
-
-const towns = new Set(['Tegucigalpa', 'San Pedro Sula', 'Choloma', 'La Ceiba', 'El Progreso', 'Choluteca', 'Comayagua', 'Puerto Cortés', 'La Lima', 'Danlí']);
-const generateDestination = () => getRandomElement(towns);
-export const getTowns = () => towns;
 
 const abouts = new Set([
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -48,60 +41,74 @@ const abouts = new Set([
   'Nunc fermentum tortor ac porta dapibus.',
   'In rutrum ac purus sit amet tempus.',
 ]);
-const generateDescription = () => getRndArr(abouts, MAX_ABOUT_LENGTH, MIN_ABOUT_LENGTH).join(' ');
 
-const options = [
-  {
-    title: 'Order Uber',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Add luggage',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Rent a car',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Add breakfast',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Book tickets',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Switch to comfort',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Lunch in city',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-  {
-    title: 'Add meal',
-    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
-    type: getRndArr(waypointTypes, MAX_OPTIONS_TYPES),
-  },
-];
+const generateDescription = () => getRndArr(abouts, MAX_ABOUT_LENGTH, MIN_ABOUT_LENGTH).join(' ');
 
 const generatePhotos = () => {
   const photosCount = getRandomInteger(MIN_PHOTOS_COUNT, MAX_PHOTOS_COUNT);
   const photosArray = [];
   for (let actionIndex = 0; actionIndex < photosCount; actionIndex++) {
-    const photoUrl = `http://picsum.photos/248/152?r=${Math.random()}`;
+    const photoUrl = { src: `http://picsum.photos/248/152?r=${Math.random()}`, description: generateDescription() };
     photosArray.push(photoUrl);
   }
   return photosArray;
 };
+
+const waypointTypes = new Set(['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant']);
+const generateWaypointType = () => getRandomElement(waypointTypes);
+export const getWaypointTypes = () => waypointTypes;
+
+const towns = new Set(['Tegucigalpa', 'San Pedro Sula', 'Choloma', 'La Ceiba', 'El Progreso', 'Choluteca', 'Comayagua', 'Puerto Cortés', 'La Lima', 'Danlí']);
+
+export const destinations = new Map();
+for (const town of towns) {
+  destinations.set(town, { name: town, description: generateDescription(), pictures: generatePhotos() });
+}
+
+export const getTowns = () => towns;
+
+const options = [
+  {
+    title: 'Order Uber',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Add luggage',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Rent a car',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Add breakfast',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Book tickets',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Switch to comfort',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Lunch in city',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+  {
+    title: 'Add meal',
+    price: getRandomInteger(MIN_OFFER_PRICE, MAX_OFFER_PRICE),
+  },
+];
+
+const generateOptions = () => getRndArr(options, MAX_OPTIONS_COUNT, MIN_OPTIONS_COUNT);
+
+export const offers = new Map();
+for (const waypointType of waypointTypes) {
+  offers.set(waypointType.toLowerCase(), generateOptions());
+}
+console.log(offers);
 
 const today = dayjs();
 const maxDay = dayjs(today).add(MAX_DURATION, 'day');
@@ -112,11 +119,9 @@ const generateDate = (from, to) => {
 
 export const points = [];
 for (let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
-  const destination = {
-    description: generateDescription(),
-    name: generateDestination(),
-    pictures: generatePhotos(),
-  };
+  const type = generateWaypointType();
+  const town = getRandomElement(towns);
+  const destination = destinations.get(town);
   const generatePoint = () => {
     const dateFrom = generateDate(today, maxDay);
     const dateTo = generateDate(dateFrom, maxDay);
@@ -126,10 +131,10 @@ for (let actionIndex = 0; actionIndex < POINTS_LENGTH; actionIndex++) {
       dateTo: dateTo.toDate(),
       id: actionIndex,
       isFavorite: Boolean(getRandomInteger(0, 1)),
-      type: genegateWaypointType(),
+      offers: getRndArr(offers.get(type.toLowerCase()), undefined, 0),
+      type,
       destination,
     };
-    point.offers = options.filter((e) => e.type.includes(point.type));
     return point;
   };
   points.push(generatePoint());

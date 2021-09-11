@@ -2,9 +2,10 @@ import AbstractView from '../abstract';
 
 const createPicturesTemplate = (task) => {
   const { destination } = task;
+
   let items = '';
   for (let actionIndex = 0; actionIndex < destination.pictures.length; actionIndex++) {
-    items += `<img class="event__photo" src="${destination.pictures[actionIndex]}" alt="Event photo">`;
+    items += `<img class="event__photo" src="${destination.pictures[actionIndex].src}" alt="Event photo">`;
   }
   return items;
 };

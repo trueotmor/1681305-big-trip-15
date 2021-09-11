@@ -1,12 +1,12 @@
-import { humanizeTaskDate } from '../../utils/utils.js';
+import { humanizePointDate } from '../../utils/utils.js';
 import AbstractView from '../abstract.js';
 
 const createTripRouteTemplate = (route) => {
   if (route.length === 0) {
     return '';
   }
-  const routeDateFrom = route[0].dateFrom !== null ? humanizeTaskDate(route[0].dateFrom, 'short') : '';
-  const routeDateTo = route[route.length - 1].dateTo !== null ? humanizeTaskDate(route[route.length - 1].dateTo, 'short') : '';
+  const routeDateFrom = route[0].dateFrom !== null ? humanizePointDate(route[0].dateFrom, 'short') : '';
+  const routeDateTo = route[route.length - 1].dateTo !== null ? humanizePointDate(route[route.length - 1].dateTo, 'short') : '';
   let routeList = '';
   routeList = route.map((elem) => elem.destination.name).join(' &mdash; ');
   return `<div class="trip-info__main">

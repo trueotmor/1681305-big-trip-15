@@ -6,6 +6,7 @@ import TripTabsView from '../view/trip-tabs.js';
 import TripFiltersView from '../view/trip-filters.js';
 import TripPointFormView from '../view/trip-point-form/trip-point-form.js';
 import TripPointPresenter from './trip-point.js';
+import TripNewEventButtonView from '../view/trip-point-form/trip-new-event-button.js';
 
 import { render, renderPosition } from '../utils/render.js';
 import { dateDifference, updateItem } from '../utils/utils.js';
@@ -33,6 +34,7 @@ export default class Trip {
     this._tabsComponent = new TripTabsView();
     this._filtersComponent = new TripFiltersView();
     this._eventsListComponent = new TripEventListView();
+    this._newEventButtonComponent = new TripNewEventButtonView();
 
     this._handleSortChange = this._handleSortChange.bind(this);
     this._handleEventChange = this._handleEventChange.bind(this);
@@ -43,6 +45,10 @@ export default class Trip {
     this._points = points.slice();
     this._renderHeader();
     this._renderRoute();
+    this._newEventButtonComponent.setNewEventCLickHandler();
+  }
+
+  createPoint() {
     this._renderNewPointForm();
   }
 
@@ -118,10 +124,7 @@ export default class Trip {
   }
 
   _renderNewPointForm() {
-    // временные данные для формы
-    const newFormTempData = { ...this._points[0] };
-    delete newFormTempData.id;
-    const newPointForm = new TripPointFormView(newFormTempData);
+    const newPointForm = new TripPointFormView();
     render(this._eventsListComponent, newPointForm, renderPosition.AFTERBEGIN);
   }
 

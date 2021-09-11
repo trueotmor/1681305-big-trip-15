@@ -2,9 +2,9 @@ import PointOffersView from './trip-point-offers.js';
 import PointDescriptionView from './trip-point-description.js';
 import AbstractView from '../abstract.js';
 
-const createPointDetailsTemplate = (task) => `<section class="event__details">
-    ${new PointOffersView(task).getTemplate()}
-    ${new PointDescriptionView(task).getTemplate()}
+const createPointDetailsTemplate = (data) => `<section class="event__details">
+    ${new PointOffersView(data).getTemplate()}
+    ${new PointDescriptionView(data).getTemplate()}
   </section>`;
 
 export default class PointDetailsView extends AbstractView {

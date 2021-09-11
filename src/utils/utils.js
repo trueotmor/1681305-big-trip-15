@@ -51,7 +51,7 @@ export const getRandomElement = (iterable) => {
   return clonedData[randomIndex];
 };
 
-export const humanizeTaskDate = (taskDate, format = 'common') => {
+export const humanizePointDate = (taskDate, format = 'common') => {
   if (dateFormats.has(format)) {
     format = dateFormats.get(format);
   }
