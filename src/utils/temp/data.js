@@ -108,7 +108,6 @@ export const offers = new Map();
 for (const waypointType of waypointTypes) {
   offers.set(waypointType.toLowerCase(), generateOptions());
 }
-console.log(offers);
 
 const today = dayjs();
 const maxDay = dayjs(today).add(MAX_DURATION, 'day');
