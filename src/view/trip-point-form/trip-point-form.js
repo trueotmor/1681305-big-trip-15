@@ -172,7 +172,9 @@ export default class TripPointFormView extends SmartView {
   _setInnerHandlers() {
     this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceInputHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._typeToggleHandler);
-    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offerChangeHandler);
+    if (this._data.offers.length) {
+      this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offerChangeHandler);
+    }
     this.getElement().querySelector('#event-destination-1').addEventListener('change', this._townToggleHandler);
   }
 
