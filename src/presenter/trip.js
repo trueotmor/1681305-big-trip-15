@@ -21,7 +21,9 @@ const tripEventsElement = pageMainElement.querySelector('.trip-events');
 const sortTypes = new TripSortView().sortTypes;
 
 export default class Trip {
-  constructor() {
+  constructor(pointsModel) {
+    this._pointsModel = pointsModel;
+
     this._routeContainer = tripEventsElement;
     this._infoContainer = tripMainElement;
     this._tabsContainer = tripTabsElement;
@@ -50,6 +52,22 @@ export default class Trip {
 
   createPoint() {
     this._renderNewPointForm();
+  }
+
+  _getPoints() {
+    return this._pointsModel.getPoints();
+    // this._filterType = this._filterModel.getFilter();
+    // const points = this._pointsModel.getPoints();
+    // const filteredPoints = filter[this._filterType](points);
+    // switch (this._currentSortType) {
+    //   case SortType.DEFAULT:
+    //     return filteredPoints.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
+    //   case SortType.TIME:
+    //     return filteredPoints.sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
+    //   case SortType.PRICE:
+    //     return filteredPoints.sort((a, b) => b.basePrice - a.basePrice);
+    // }
+    // return filteredPoints;
   }
 
   _sortEvents(sortType) {

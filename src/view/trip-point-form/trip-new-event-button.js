@@ -1,7 +1,6 @@
 import AbstractView from '../abstract.js';
-import { tripRoutePresenter } from '../../main.js';
 
-const createNewEventTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
+const createNewEventButtonTemplate = () => '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>';
 
 export default class TripNewEventButtonView extends AbstractView {
   constructor() {
@@ -10,17 +9,16 @@ export default class TripNewEventButtonView extends AbstractView {
   }
 
   getTemplate() {
-    return createNewEventTemplate();
+    return createNewEventButtonTemplate();
   }
 
   _newEventHandler(evt) {
     evt.preventDefault();
-    tripRoutePresenter.createPoint();
-    document.querySelector('.event__save-btn').disabled = true;
-    document.querySelector('.trip-main__event-add-btn').disabled = true;
+    this._callback.newEventClick();
   }
 
-  setNewEventCLickHandler() {
-    document.querySelector('.trip-main__event-add-btn').addEventListener('click', this._newEventHandler);
+  setNewEventCLickHandler(callback) {
+    this._callback.newEventClick = callback;
+    this.getElement().addEventListener('click', this._newEventHandler);
   }
 }
