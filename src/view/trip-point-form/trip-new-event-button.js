@@ -5,20 +5,20 @@ const createNewEventButtonTemplate = () => '<button class="trip-main__event-add-
 export default class TripNewEventButtonView extends AbstractView {
   constructor() {
     super();
-    this._newEventHandler = this._newEventHandler.bind(this);
+    this._newPointClickHandler = this._newPointClickHandler.bind(this);
   }
 
   getTemplate() {
     return createNewEventButtonTemplate();
   }
 
-  _newEventHandler(evt) {
+  _newPointClickHandler(evt) {
     evt.preventDefault();
     this._callback.newEventClick();
   }
 
-  setNewEventCLickHandler(callback) {
+  setNewPointClickHandler(callback) {
     this._callback.newEventClick = callback;
-    this.getElement().addEventListener('click', this._newEventHandler);
+    this.getElement().addEventListener('click', this._newPointClickHandler);
   }
 }

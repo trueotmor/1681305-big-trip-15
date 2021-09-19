@@ -2,6 +2,8 @@ import { humanizePointDate } from '../../utils/utils';
 import { dateDifference } from '../../utils/utils';
 import AbstractView from '../abstract';
 
+import he from 'he';
+
 const createOffersTemplate = (point) => {
   let items = '';
   for (const item of point.offers) {
@@ -33,7 +35,7 @@ const createEventItemInnerTemplate = (point) => {
       <div class="event__type">
         <img class="event__type-icon" width="42" height="42" src="img/icons/${type.toLowerCase()}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${type} ${destination.name}</h3>
+      <h3 class="event__title">${type} ${he.encode(destination.name)}</h3>
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${dateFromTypeOne}T${timeFrom}">${dateFromTypeTwo} | ${timeFrom}</time>

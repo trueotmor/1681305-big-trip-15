@@ -6,11 +6,14 @@ import { humanizePointDate } from '../../utils/utils.js';
 
 import PointDetailsView from './trip-point-details.js';
 import SmartView from '../smart.js';
+import PointsModel from '../../model/points.js';
 
 import { destinations, offers } from '../../utils/temp/data.js';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
 import dayjs from 'dayjs';
+
+import he from 'he';
 
 const BLANK_POINT = {
   type: 'bus',
@@ -96,7 +99,7 @@ const createPointTemplate = (data) => {
           ${typeKey}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-          value="${destination.name}" list="destination-list-1">
+          value="${he.encode(destination.name)}" list="destination-list-1">
         <datalist id="destination-list-1">
           ${createDataListItemsTemplate(getTowns())}
         </datalist>
@@ -129,13 +132,15 @@ const createPointTemplate = (data) => {
 export default class TripPointFormView extends SmartView {
   constructor(point = BLANK_POINT) {
     super();
-    this._data = TripPointFormView.parsePointToData(point);
+    this._pointsModel = new PointsModel();
+    this._data = this._pointsModel.parsePointToData(point);
 
     this._dateFromPicker = null;
     this._dateToPicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formEditHandler = this._formEditHandler.bind(this);
+    this._formDeleteHandler = this._formDeleteHandler.bind(this);
 
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
@@ -155,8 +160,22 @@ export default class TripPointFormView extends SmartView {
     return createPointTemplate(this._data);
   }
 
+  removeElement() {
+    super.removeElement();
+
+    if (this._dateFromPicker) {
+      this._dateFromPicker.destroy();
+      this._dateFromPicker = null;
+    }
+
+    if (this._dateToPicker) {
+      this._dateToPicker.destroy();
+      this._dateToPicker = null;
+    }
+  }
+
   reset(point) {
-    this.updateData(TripPointFormView.parsePointToData(point));
+    this.updateData(this._pointsModel.parsePointToData(point));
   }
 
   restoreHandlers() {
@@ -167,6 +186,7 @@ export default class TripPointFormView extends SmartView {
 
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormEditHandler(this._callback.edit);
+    this.setDeleteHandler(this._callback.delete);
   }
 
   _setInnerHandlers() {
@@ -211,15 +231,21 @@ export default class TripPointFormView extends SmartView {
   }
 
   _dateFromChangeHandler([userDateFrom]) {
-    this.updateData({
-      dateFrom: userDateFrom,
-    });
+    this.updateData(
+      {
+        dateFrom: userDateFrom,
+      },
+      true,
+    );
   }
 
   _dateToChangeHandler([userDateTo]) {
-    this.updateData({
-      dateTo: userDateTo,
-    });
+    this.updateData(
+      {
+        dateTo: userDateTo,
+      },
+      true,
+    );
   }
 
   _offerChangeHandler(evt) {
@@ -275,12 +301,17 @@ export default class TripPointFormView extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(TripPointFormView.parseDataToPoint(this._data));
+    this._callback.formSubmit(this._pointsModel.parseDataToPoint(this._data));
   }
 
   _formEditHandler(evt) {
     evt.preventDefault();
     this._callback.edit();
+  }
+
+  _formDeleteHandler(evt) {
+    evt.preventDefault();
+    this._callback.delete(this._pointsModel.parseDataToPoint(this._data));
   }
 
   setFormSubmitHandler(callback) {
@@ -290,15 +321,13 @@ export default class TripPointFormView extends SmartView {
 
   setFormEditHandler(callback) {
     this._callback.edit = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formEditHandler);
+    if (this._data.id) {
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formEditHandler);
+    }
   }
 
-  static parsePointToData(point) {
-    return Object.assign({}, point);
-  }
-
-  static parseDataToPoint(data) {
-    data = Object.assign({}, data);
-    return data;
+  setDeleteHandler(callback) {
+    this._callback.delete = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteHandler);
   }
 }

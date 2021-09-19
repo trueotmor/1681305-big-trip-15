@@ -1,11 +1,7 @@
 import TripEventView from '../view/trip-event/trip-event.js';
 import TripPointFormView from '../view/trip-point-form/trip-point-form.js';
 import { replace, render, remove } from '../utils/render.js';
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
+import { Mode, UserAction, UpdateType } from '../const.js';
 
 export default class TripPoint {
   constructor(container, changeData, changeMode) {
@@ -22,6 +18,7 @@ export default class TripPoint {
     this._handleFormEsc = this._handleFormEsc.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleFavorite = this._handleFavorite.bind(this);
+    this._handleDelete = this._handleDelete.bind(this);
   }
 
   init(point) {
@@ -38,6 +35,8 @@ export default class TripPoint {
 
     this._formComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._formComponent.setFormEditHandler(this._handleFormEsc);
+
+    this._formComponent.setDeleteHandler(this._handleDelete);
 
     this._reinit(prevEventComponent, prevFormComponent);
   }
@@ -93,8 +92,9 @@ export default class TripPoint {
     }
   }
 
-  _handleFormSubmit(point) {
-    this._changeData(point);
+  _handleFormSubmit(update) {
+    const isMajorUpdate = this._point.dateFrom !== update.dateFrom || this._point.dateTo !== update.dateTo;
+    this._changeData(UserAction.UPDATE_POINT, isMajorUpdate ? UpdateType.MAJOR : UpdateType.MINOR, update);
     this._replaceFormToEvent();
   }
 
@@ -104,9 +104,15 @@ export default class TripPoint {
 
   _handleFavorite() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
       Object.assign({}, this._point, {
         isFavorite: !this._point.isFavorite,
       }),
     );
+  }
+
+  _handleDelete(point) {
+    this._changeData(UserAction.DELETE_POINT, UpdateType.MAJOR, point);
   }
 }

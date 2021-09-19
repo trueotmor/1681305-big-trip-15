@@ -60,12 +60,25 @@ export const humanizePointDate = (taskDate, format = 'common') => {
 
 export const dateDifference = (startDate, endDate, timeFormat) => dayjs(startDate).diff(endDate, timeFormat);
 
-export const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
+export const getTripDurationFormat = (duration) => {
+  const MINUTES_PER_HOUR = 60;
+  const MINUTES_PER_DAY = 1440;
 
-  if (index === -1) {
-    return items;
+  if (duration >= MINUTES_PER_DAY) {
+    return 'D[D] HH[H] mm[M]';
+  } else if (duration >= MINUTES_PER_HOUR) {
+    return 'H[H] mm[M]';
+  } else {
+    return 'mm[M]';
   }
-
-  return [...items.slice(0, index), update, ...items.slice(index + 1)];
 };
+
+export const getUniqueItems = (items) => [...new Set(items)];
+
+export const countMoneyOfPointsByType = (points, type) =>
+  points.filter((point) => point.type === type).reduce((accumulator, point) => accumulator + point.basePrice, 0);
+
+export const countPointsByType = (points, type) => points.filter((point) => point.type === type).length;
+
+export const countTimeOfPointsByType = (points, type) =>
+  points.filter((point) => point.type === type).reduce((sum, point) => sum + (point.dateTo - point.dateFrom), 0);
