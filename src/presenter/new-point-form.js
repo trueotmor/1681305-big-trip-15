@@ -1,7 +1,6 @@
 import TripPointFormView from '../view/trip-point-form/trip-point-form.js';
 import { remove, render, renderPosition } from '../utils/render.js';
-import { UserAction, UpdateType } from '../const.js';
-import { nanoid } from 'nanoid';
+import { UserAction, UpdateType, BLANK_POINT } from '../const.js';
 
 export default class NewPointForm {
   constructor(container, changeData) {
@@ -20,7 +19,7 @@ export default class NewPointForm {
       return;
     }
 
-    this._pointFormComponent = new TripPointFormView();
+    this._pointFormComponent = new TripPointFormView(BLANK_POINT);
     this._pointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointFormComponent.setDeleteHandler(this._handleDeleteClick);
 
@@ -40,8 +39,27 @@ export default class NewPointForm {
     document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
+  setSaving() {
+    this._pointFormComponent.updateData({
+      isDisabled: true,
+      isSaving: true,
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this._pointFormComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this._pointFormComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
-    this._changeData(UserAction.ADD_POINT, UpdateType.MAJOR, Object.assign({ id: nanoid() }, point));
+    this._changeData(UserAction.ADD_POINT, UpdateType.MAJOR, point);
     this.destroy();
     document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
   }

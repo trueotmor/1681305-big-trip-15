@@ -6,36 +6,22 @@ import { humanizePointDate } from '../../utils/utils.js';
 
 import PointDetailsView from './trip-point-details.js';
 import SmartView from '../smart.js';
-import PointsModel from '../../model/points.js';
 
 import { destinations, offers } from '../../utils/temp/data.js';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
-import dayjs from 'dayjs';
+// import dayjs from 'dayjs';
 
 import he from 'he';
 
-const BLANK_POINT = {
-  type: 'bus',
-  basePrice: 0,
-  dateFrom: dayjs().toDate(),
-  dateTo: dayjs().toDate(),
-  offers: [],
-  destination: {
-    name: 'Please select a destination',
-    description: '',
-    pictures: [],
-  },
-  isFavotite: false,
-};
-
-const createTypesTemplate = (set, point) => {
+const createTypesTemplate = (set, isDisabled, isChecked) => {
   let items = '';
   for (const item of set) {
-    const checked = point.type === item ? 'checked' : '';
+    const checked = isChecked ? 'checked' : '';
+    const disabled = isDisabled ? 'disabled' : '';
     items += `
       <div class="event__type-item">
-        <input id="event-type-${item.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.toLowerCase()}"${checked}>
+        <input id="event-type-${item.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.toLowerCase()}"${checked}${disabled}>
         <label class="event__type-label  event__type-label--${item.toLowerCase()}" for="event-type-${item.toLowerCase()}-1">${item}</label>
       </div>`;
   }
@@ -50,16 +36,24 @@ const createDataListItemsTemplate = (set) => {
   return items;
 };
 
-const createButtonsTemplate = (id) => {
+const createButtonsTemplate = (id, isDisabled, isSaving, isDeleting) => {
   if (id) {
-    return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
-      <span class="visually-hidden">Open event</span>
-  </button>`;
+    return `<button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
+              ${isSaving ? 'Saving...' : 'Save'}
+            </button>
+            <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+              ${isDeleting ? 'Deleting...' : 'Delete'}
+            </button>
+            <button class="event__rollup-btn" type="button">
+              <span class="visually-hidden">Open event</span>
+            </button>`;
   } else {
-    return `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-    <button class="event__reset-btn" type="reset">Cancel</button>`;
+    return `<button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
+              ${isSaving ? 'Saving...' : 'Save'}
+            </button>
+            <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+              Cancel
+            </button>`;
   }
 };
 
@@ -71,6 +65,8 @@ const createPointTemplate = (data) => {
   const typeKey = data.type;
 
   const { destination, dateFrom, dateTo, basePrice, id } = data;
+
+  // const { type = '', id = 0, basePrice = 0, dateFrom = dayjs().toDate(), dateTo = dayjs().toDate(), destination = {}, isDisabled, isSaving, isDeleting } = data;
 
   const dateFromFormatted = dateFrom !== null ? humanizePointDate(dateFrom, 'full') : '';
 
@@ -99,7 +95,7 @@ const createPointTemplate = (data) => {
           ${typeKey}
         </label>
         <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-          value="${he.encode(destination.name)}" list="destination-list-1">
+          value="${he.encode(destination.name)}" list="destination-list-1" placeholder = 'Please select a destination'>
         <datalist id="destination-list-1">
           ${createDataListItemsTemplate(getTowns())}
         </datalist>
@@ -130,10 +126,11 @@ const createPointTemplate = (data) => {
 };
 
 export default class TripPointFormView extends SmartView {
-  constructor(point = BLANK_POINT) {
+  constructor(point, pointsModel) {
     super();
-    this._pointsModel = new PointsModel();
-    this._data = this._pointsModel.parsePointToData(point);
+    this._point = point;
+    this._pointsModel = pointsModel;
+    this._data = this._pointsModel.parsePointToData(this._point);
 
     this._dateFromPicker = null;
     this._dateToPicker = null;
@@ -192,9 +189,9 @@ export default class TripPointFormView extends SmartView {
   _setInnerHandlers() {
     this.getElement().querySelector('#event-price-1').addEventListener('input', this._priceInputHandler);
     this.getElement().querySelector('.event__type-group').addEventListener('change', this._typeToggleHandler);
-    if (this._data.offers.length) {
-      this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offerChangeHandler);
-    }
+    // if (this._data.offers.length) {
+    //   this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offerChangeHandler);
+    // }
     this.getElement().querySelector('#event-destination-1').addEventListener('change', this._townToggleHandler);
   }
 
@@ -268,7 +265,6 @@ export default class TripPointFormView extends SmartView {
         actionIndex++;
       }
     }
-
     this.updateData();
   }
 

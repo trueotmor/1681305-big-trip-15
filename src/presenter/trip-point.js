@@ -1,10 +1,10 @@
 import TripEventView from '../view/trip-event/trip-event.js';
 import TripPointFormView from '../view/trip-point-form/trip-point-form.js';
 import { replace, render, remove } from '../utils/render.js';
-import { Mode, UserAction, UpdateType } from '../const.js';
+import { Mode, UserAction, UpdateType, State } from '../const.js';
 
 export default class TripPoint {
-  constructor(container, changeData, changeMode) {
+  constructor(container, changeData, changeMode, pointsModel) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
@@ -12,6 +12,8 @@ export default class TripPoint {
     this._eventComponent = null;
     this._formComponent = null;
     this._mode = Mode.DEFAULT;
+
+    this._pointsModel = pointsModel;
 
     this._handleEdit = this._handleEdit.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -28,7 +30,7 @@ export default class TripPoint {
     const prevFormComponent = this._formComponent;
 
     this._eventComponent = new TripEventView(point);
-    this._formComponent = new TripPointFormView(point);
+    this._formComponent = new TripPointFormView(point, this._pointsModel);
 
     this._eventComponent.setFormEditHandler(this._handleEdit);
     this._eventComponent.setAddFavoriteHandler(this._handleFavorite);
@@ -48,7 +50,41 @@ export default class TripPoint {
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
+      this._formComponent.reset(this._point);
       this._replaceFormToEvent();
+    }
+  }
+
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._formComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._formComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._formComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._formComponent.shake(resetFormState);
+        break;
     }
   }
 
@@ -61,7 +97,8 @@ export default class TripPoint {
     if (this._mode === Mode.DEFAULT) {
       replace(this._eventComponent, prevEventComponent);
     } else {
-      replace(this._formComponent, prevFormComponent);
+      replace(this._eventComponent, prevFormComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -72,6 +109,7 @@ export default class TripPoint {
     replace(this._formComponent, this._eventComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
     this._changeMode();
+    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
     this._mode = Mode.EDITING;
   }
 
@@ -93,12 +131,11 @@ export default class TripPoint {
   }
 
   _handleFormSubmit(update) {
-    const isMajorUpdate = this._point.dateFrom !== update.dateFrom || this._point.dateTo !== update.dateTo;
-    this._changeData(UserAction.UPDATE_POINT, isMajorUpdate ? UpdateType.MAJOR : UpdateType.MINOR, update);
-    this._replaceFormToEvent();
+    this._changeData(UserAction.UPDATE_POINT, UpdateType.MINOR, update);
   }
 
   _handleFormEsc() {
+    this._formComponent.reset(this._point);
     this._replaceFormToEvent();
   }
 
