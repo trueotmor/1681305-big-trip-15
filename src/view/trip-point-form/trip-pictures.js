@@ -1,34 +1,28 @@
 import AbstractView from '../abstract';
 
-const createPicturesTemplate = (task) => {
-  const { destination } = task;
+const createPicturesContainerTemplate = (pictures) => {
+  const createDestinationPictureTemplate = (picture = {}) => {
+    const src = picture.src ? picture.src : '';
+    const pictureDescription = picture.description ? picture.description : '';
 
-  let items = '';
-  for (let actionIndex = 0; actionIndex < destination.pictures.length; actionIndex++) {
-    items += `<img class="event__photo" src="${destination.pictures[actionIndex].src}" alt="Event photo">`;
-  }
-  return items;
-};
+    return `<img class="event__photo" src="${src}" alt="${pictureDescription}">`;
+  };
 
-const createPicturesContainerTemplate = (task) => {
-  if (task.destination.pictures.length === 0) {
-    return '';
-  } else {
-    return `<div class="event__photos-container">
+  const photos = pictures.map((picture) => createDestinationPictureTemplate(picture)).join('');
+  return `<div class="event__photos-container">
         <div class="event__photos-tape">
-          ${createPicturesTemplate(task)}
+          ${photos}
         </div>
       </div>`;
-  }
 };
 
 export default class PointPicturesView extends AbstractView {
-  constructor(task) {
+  constructor(pictures) {
     super();
-    this._task = task;
+    this._pictures = pictures;
   }
 
   getTemplate() {
-    return createPicturesContainerTemplate(this._task);
+    return createPicturesContainerTemplate(this._pictures);
   }
 }

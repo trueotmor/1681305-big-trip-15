@@ -2,16 +2,10 @@ import AbstractView from '../abstract.js';
 
 const calculateTotalPrice = (route) => {
   let basePrice = 0;
-  let offersPrice = 0;
-  route.forEach((e) => {
-    e.offers.forEach((el) => {
-      offersPrice += el.price;
-    });
-  });
   route.forEach((e) => {
     basePrice += e.basePrice;
   });
-  const totalPrice = offersPrice + basePrice;
+  const totalPrice = basePrice;
   return totalPrice;
 };
 

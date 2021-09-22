@@ -2,9 +2,10 @@ import AbstractObserver from '../utils/abstract-observer.js';
 import dayjs from 'dayjs';
 
 export default class Points extends AbstractObserver {
-  constructor() {
+  constructor(offersModel) {
     super();
     this._points = [];
+    this._offersModel = offersModel;
   }
 
   setPoints(updateType, points) {
@@ -46,13 +47,37 @@ export default class Points extends AbstractObserver {
     this._notify(updateType);
   }
 
+  // parsePointToData(point) {
+  //   return Object.assign({}, point);
+  // }
+
+  // parseDataToPoint(data) {
+  //   data = Object.assign({}, data);
+  //   return data;
+  // }
+
   parsePointToData(point) {
-    return Object.assign({}, point);
+    const data = Object.assign({}, JSON.parse(JSON.stringify(point)), {
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+      offersList: this._offersModel.getOffers().find((item) => item.type === point.type).offers,
+    });
+    data.dateFrom = dayjs(data.dateFrom).toDate();
+    data.dateTo = dayjs(data.dateTo).toDate();
+    return data;
   }
 
   parseDataToPoint(data) {
-    data = Object.assign({}, data);
-    return data;
+    const point = JSON.parse(JSON.stringify(data));
+    point.dateFrom = dayjs(point.dateFrom).toDate();
+    point.dateTo = dayjs(point.dateTo).toDate();
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+    delete point.offersList;
+    return point;
   }
 
   static adaptToClient(point) {

@@ -1,25 +1,23 @@
-import AbstractView from '../abstract';
+import AbstractView from '../abstract.js';
 import PointPicturesView from './trip-pictures';
 
-const createDescriptionTemplate = (task) => {
-  if (task.destination.description === '' && task.destination.pictures.length === 0) {
-    return '';
-  } else {
-    return `<section class="event__section  event__section--destination">
-      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-      <p class="event__destination-description">${task.destination.description}</p>
-      ${new PointPicturesView(task).getTemplate()}
-    </section>`;
-  }
-};
+const createDescriptionTemplate = (destination) => {
+  const { description = '', pictures = [] } = destination;
+  const picturesComponent = new PointPicturesView(pictures).getTemplate();
 
+  return `<section class="event__section  event__section--destination">
+            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+            <p class="event__destination-description">${description}</p>
+            ${picturesComponent}
+          </section>`;
+};
 export default class PointDescriptionView extends AbstractView {
-  constructor(task) {
+  constructor(destination) {
     super();
-    this._task = task;
+    this._destination = destination;
   }
 
   getTemplate() {
-    return createDescriptionTemplate(this._task);
+    return createDescriptionTemplate(this._destination);
   }
 }

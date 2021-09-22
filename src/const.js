@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+
 export const SortType = {
   Day: 'day',
   Duration: 'duration',
@@ -54,11 +55,11 @@ export const BLANK_POINT = {
   dateTo: dayjs().toDate(),
   offers: [],
   destination: {},
-  isFavotite: false,
+  isFavorite: false,
 };
 
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 
-export const AUTHORIZATION = 'Basic GhtU4AvU4anfZL6';
+export const AUTHORIZATION = 'Basic GhtU4AvU4anfZ666';

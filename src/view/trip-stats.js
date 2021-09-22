@@ -312,8 +312,8 @@ export default class TripStatisticsView extends SmartView {
     const typeCtx = this.getElement().querySelector('.statistic__type');
     const timeCtx = this.getElement().querySelector('.statistic__time');
 
-    this._moneyCtx = renderMoneyChart(moneyCtx, points);
-    this._typeCtx = renderTypeChart(typeCtx, points);
-    this._timeCtx = renderTimeChart(timeCtx, points);
+    this._moneyChart = renderMoneyChart(moneyCtx, points);
+    this._typeChart = renderTypeChart(typeCtx, points);
+    this._timeChart = renderTimeChart(timeCtx, points);
   }
 }

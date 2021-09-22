@@ -5,15 +5,24 @@ import TripInfoView from '../view/trip-info/trip-info.js';
 import TripSiteMenuView from '../view/trip-site-menu.js';
 import TripPointPresenter from './trip-point.js';
 import TripNewEventButtonView from '../view/trip-point-form/trip-new-event-button.js';
-import NewPointFormPresenter from './new-point-form.js';
 import TripStatisticsView from '../view/trip-stats.js';
 import TripLoadingView from '../view/loading.js';
+
+import OffersModel from '../model/offers.js';
+import DestinationsModel from '../model/destinations.js';
+import FiltersModel from '../model/filters.js';
+import PointsModel from '../model/points.js';
+
+import NewPointFormPresenter from './new-point-form.js';
+import FiltersPresenter from '../presenter/filters.js';
+
+import Api from '../api.js';
 
 import { render, renderPosition, remove } from '../utils/render.js';
 import { dateDifference } from '../utils/utils.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
-import { MenuItem, State } from '../const.js';
+import { MenuItem, State, END_POINT, AUTHORIZATION } from '../const.js';
 
 const pageHeaderElement = document.querySelector('.page-header');
 const pageMainElement = document.querySelector('.page-main');
@@ -21,10 +30,21 @@ const tripMainElement = pageHeaderElement.querySelector('.trip-main');
 const tripSiteMenuElement = pageHeaderElement.querySelector('.trip-controls__navigation');
 const tripEventsElement = pageMainElement.querySelector('.trip-events');
 
+const api = new Api(END_POINT, AUTHORIZATION);
+
+const pointsPromise = api.getPoints();
+const offersPromise = api.getOffers();
+const destinationsPromise = api.getDestinations();
+
 export default class Trip {
-  constructor(pointsModel, filtersModel, api) {
-    this._pointsModel = pointsModel;
-    this._filtersModel = filtersModel;
+  constructor() {
+    this._offersModel = new OffersModel();
+    this._pointsModel = new PointsModel(this._offersModel);
+    this._destinationsModel = new DestinationsModel();
+    this._filtersModel = new FiltersModel();
+
+    this._tripFilterPresenter = new FiltersPresenter(this._pointsModel, this._filtersModel);
+
     this._api = api;
 
     this._routeContainer = tripEventsElement;
@@ -54,15 +74,45 @@ export default class Trip {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSiteMenuClick = this._handleSiteMenuClick.bind(this);
 
-    this._newPointFormPresenter = new NewPointFormPresenter(this._eventsListComponent, this._handleViewAction);
+    this._newPointFormPresenter = new NewPointFormPresenter(
+      this._eventsListComponent,
+      this._handleViewAction,
+      this._pointsModel,
+      this._offersModel,
+      this._destinationsModel,
+    );
   }
 
   init() {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filtersModel.addObserver(this._handleModelEvent);
-    this._renderHeader();
+
     this._renderRoute();
-    this._newEventButtonComponent.setNewPointClickHandler();
+
+    document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+      evt.preventDefault();
+      this.createPoint();
+    });
+
+    Promise.all([pointsPromise, offersPromise, destinationsPromise])
+      .then(([points, offers, destinations]) => {
+        this._offersModel.setOffers(offers);
+        this._destinationsModel.setDestinations(destinations);
+        this._pointsModel.setPoints(UpdateType.INIT, points);
+
+        this._renderHeader();
+        render(this._siteMenuContainer, this._siteMenuComponent);
+        this._tripFilterPresenter.init();
+        this._newEventButtonComponent.setNewPointClickHandler(this._handleNewPointClick);
+        this._siteMenuComponent.setMenuClickHandler(this._handleSiteMenuClick);
+      })
+      .catch(() => {
+        this._renderHeader();
+        render(this._siteMenuContainer, this._siteMenuComponent);
+        this._tripFilterPresenter.init();
+        this._newEventButtonComponent.setNewPointClickHandler(this._handleNewPointClick);
+        this._siteMenuComponent.setMenuClickHandler(this._handleSiteMenuClick);
+      });
   }
 
   destroy() {
@@ -139,6 +189,17 @@ export default class Trip {
     render(this._routeContainer, this._sortComponent);
   }
 
+  _handleNewPointClick() {
+    remove(this._statisticsComponent);
+    this.destroy();
+    this._setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.init();
+
+    this.createPoint();
+    document.querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
+    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
+  }
+
   _renderEmptyListMessage() {
     if (this._emptyListMessageComponent) {
       remove(this._emptyListMessageComponent);
@@ -153,7 +214,14 @@ export default class Trip {
   }
 
   _renderPoint(point) {
-    const pointPresenter = new TripPointPresenter(this._eventsListComponent, this._handleViewAction, this._handleModeChange, this._pointsModel);
+    const pointPresenter = new TripPointPresenter(
+      this._eventsListComponent,
+      this._handleViewAction,
+      this._handleModeChange,
+      this._pointsModel,
+      this._offersModel,
+      this._destinationsModel,
+    );
     pointPresenter.init(point);
     this._eventPresenter.set(point.id, pointPresenter);
   }
@@ -195,6 +263,7 @@ export default class Trip {
           .updatePoint(update)
           .then((response) => {
             this._pointsModel.updatePoint(updateType, response);
+            this._renderHeader();
           })
           .catch(() => {
             this._eventPresenter.get(update.id).setViewState(State.ABORTING);
@@ -204,6 +273,7 @@ export default class Trip {
         this._newPointFormPresenter.setSaving();
         this._api.addPoint(update).then((response) => {
           this._pointsModel.addPoint(updateType, response);
+          this._renderHeader();
         });
         break;
       case UserAction.DELETE_POINT:
@@ -212,6 +282,7 @@ export default class Trip {
           .deletePoint(update)
           .then(() => {
             this._pointsModel.deletePoint(updateType, update);
+            this._renderHeader();
           })
           .catch(() => {
             this._eventPresenter.get(update.id).setViewState(State.ABORTING);

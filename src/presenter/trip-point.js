@@ -4,7 +4,7 @@ import { replace, render, remove } from '../utils/render.js';
 import { Mode, UserAction, UpdateType, State } from '../const.js';
 
 export default class TripPoint {
-  constructor(container, changeData, changeMode, pointsModel) {
+  constructor(container, changeData, changeMode, pointsModel, offersModel, destinationsModel) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
@@ -14,6 +14,8 @@ export default class TripPoint {
     this._mode = Mode.DEFAULT;
 
     this._pointsModel = pointsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._handleEdit = this._handleEdit.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -30,7 +32,7 @@ export default class TripPoint {
     const prevFormComponent = this._formComponent;
 
     this._eventComponent = new TripEventView(point);
-    this._formComponent = new TripPointFormView(point, this._pointsModel);
+    this._formComponent = new TripPointFormView(point, this._pointsModel, this._offersModel, this._destinationsModel);
 
     this._eventComponent.setFormEditHandler(this._handleEdit);
     this._eventComponent.setAddFavoriteHandler(this._handleFavorite);

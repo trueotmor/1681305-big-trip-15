@@ -3,9 +3,12 @@ import { remove, render, renderPosition } from '../utils/render.js';
 import { UserAction, UpdateType, BLANK_POINT } from '../const.js';
 
 export default class NewPointForm {
-  constructor(container, changeData) {
+  constructor(container, changeData, pointsModel, offersModel, destinationsModel) {
     this._container = container;
     this._changeData = changeData;
+    this._pointsModel = pointsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._pointFormComponent = null;
 
@@ -19,7 +22,7 @@ export default class NewPointForm {
       return;
     }
 
-    this._pointFormComponent = new TripPointFormView(BLANK_POINT);
+    this._pointFormComponent = new TripPointFormView(BLANK_POINT, this._pointsModel, this._offersModel, this._destinationsModel);
     this._pointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointFormComponent.setDeleteHandler(this._handleDeleteClick);
 
