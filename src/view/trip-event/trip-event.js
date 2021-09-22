@@ -1,8 +1,9 @@
 import { humanizePointDate } from '../../utils/utils';
-import { dateDifference } from '../../utils/utils';
+import { dateDifference, getTripDurationFormat } from '../../utils/utils';
 import AbstractView from '../abstract';
 
 import he from 'he';
+import dayjs from 'dayjs';
 
 const createOffersTemplate = (point) => {
   let items = '';
@@ -21,11 +22,11 @@ const createEventItemInnerTemplate = (point) => {
   const { dateFrom, dateTo, type, basePrice, destination, isFavorite } = point;
   const dateFromTypeOne = dateFrom !== null ? humanizePointDate(dateFrom, 'common') : '';
   const dateFromTypeTwo = dateFrom !== null ? humanizePointDate(dateFrom, 'short') : '';
-  const timeFrom = dateFrom !== null ? humanizePointDate(dateFrom, 'short') : '';
+  const timeFrom = dateFrom !== null ? humanizePointDate(dateFrom, 'time') : '';
   const dateToTypeOne = dateTo !== null ? humanizePointDate(dateTo, 'common') : '';
   const dateToTypeTwo = dateTo !== null ? humanizePointDate(dateTo, 'short') : '';
-  const timeTo = dateTo !== null ? humanizePointDate(dateTo, 'short') : '';
-  const duration = dateDifference(dateTo, dateFrom, 'hour');
+  const timeTo = dateTo !== null ? humanizePointDate(dateTo, 'time') : '';
+  const duration = dateDifference(dateTo, dateFrom);
 
   const favoriteIsActive = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -38,11 +39,12 @@ const createEventItemInnerTemplate = (point) => {
       <h3 class="event__title">${type} ${he.encode(destination.name)}</h3>
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="${dateFromTypeOne}T${timeFrom}">${dateFromTypeTwo} | ${timeFrom}</time>
+          <time class="event__start-time" datetime="${dateFromTypeOne}">${dateFromTypeTwo} | ${timeFrom}</time>
           &mdash;
-          <time class="event__end-time" datetime="${dateToTypeOne}T${timeTo}">${dateToTypeTwo} | ${timeTo}</time>
+          <time class="event__end-time" datetime="${dateToTypeOne}">${dateToTypeTwo} | ${timeTo}</time>
         </p>
-        <p class="event__duration">${duration}H</p>
+
+        <p class="event__duration">${dayjs(dateTo - dateFrom - dayjs(86400000).toDate()).format(getTripDurationFormat(duration))}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

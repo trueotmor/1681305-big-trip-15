@@ -2,9 +2,9 @@ import dayjs from 'dayjs';
 
 const dateFormats = new Map([
   ['full', 'DD/MM/YY hh:mm'],
-  ['common', 'YYYY-MM-DD'],
+  ['common', 'YYYY-MM-DDTHH:mm'],
   ['short', 'MMM DD'],
-  ['time', 'hh:mm'],
+  ['time', 'HH:mm'],
 ]);
 
 // Функция из интернета по генерации случайного числа из диапазона
@@ -58,7 +58,11 @@ export const humanizePointDate = (taskDate, format = 'common') => {
   return dayjs(taskDate).format(format);
 };
 
-export const dateDifference = (startDate, endDate, timeFormat) => dayjs(startDate).diff(endDate, timeFormat);
+// Формат продолжительности нахождения в точке маршрута зависит от длительности:
+
+// Менее часа: минуты (например, 23M);
+// Менее суток: часы минуты (например, 02H 44M или 12H 00M, если минуты равны нулю);
+// Более суток: дни часы минуты (например, 01D 02H 30M или 07D 00H 00M, если часы и/или минуты равны нулю).
 
 export const getTripDurationFormat = (duration) => {
   const MINUTES_PER_HOUR = 60;
@@ -72,6 +76,8 @@ export const getTripDurationFormat = (duration) => {
     return 'mm[M]';
   }
 };
+
+export const dateDifference = (startDate, endDate) => dayjs(startDate).diff(endDate, 'm');
 
 export const getUniqueItems = (items) => [...new Set(items)];
 
