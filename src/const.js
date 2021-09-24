@@ -49,7 +49,7 @@ export const State = {
 };
 
 export const BLANK_POINT = {
-  type: 'train',
+  type: 'bus',
   basePrice: 0,
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate(),
