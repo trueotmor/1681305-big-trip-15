@@ -1,6 +1,6 @@
-import { humanizePointDate } from '../../utils/utils';
-import { dateDifference, getTripDurationFormat } from '../../utils/utils';
-import AbstractView from '../abstract';
+import { getDateDifference, getTripDurationFormat, humanizePointDate } from '../../utils/utils.js';
+import AbstractView from '../abstract.js';
+import { MILLISECONDS_PER_DAY, MINUTES_PER_DAY, MINUTES_PER_HOUR } from '../../const.js';
 
 import he from 'he';
 import dayjs from 'dayjs';
@@ -26,7 +26,7 @@ const createEventItemInnerTemplate = (point) => {
   const dateToTypeOne = dateTo !== null ? humanizePointDate(dateTo, 'common') : '';
   const dateToTypeTwo = dateTo !== null ? humanizePointDate(dateTo, 'short') : '';
   const timeTo = dateTo !== null ? humanizePointDate(dateTo, 'time') : '';
-  const duration = dateDifference(dateTo, dateFrom);
+  const duration = getDateDifference(dateTo, dateFrom);
 
   const favoriteIsActive = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -44,7 +44,8 @@ const createEventItemInnerTemplate = (point) => {
           <time class="event__end-time" datetime="${dateToTypeOne}">${dateToTypeTwo} | ${timeTo}</time>
         </p>
 
-        <p class="event__duration">${dayjs(dateTo - dateFrom - dayjs(86400000).toDate()).format(getTripDurationFormat(duration))}</p>
+        <p class="event__duration">
+        ${dayjs.utc(dateTo - dateFrom - dayjs(MILLISECONDS_PER_DAY).toDate()).format(getTripDurationFormat(duration, MINUTES_PER_DAY, MINUTES_PER_HOUR))}</p>
       </div>
       <p class="event__price">
         &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

@@ -18,8 +18,8 @@ import FiltersPresenter from '../presenter/filters.js';
 
 import Api from '../api.js';
 
-import { render, renderPosition, remove } from '../utils/render.js';
-import { dateDifference } from '../utils/utils.js';
+import { render, RenderPosition, remove } from '../utils/render.js';
+import { getDateDifference } from '../utils/utils.js';
 import { SortType, UserAction, UpdateType, FilterType } from '../const.js';
 import { filter } from '../utils/filter.js';
 import { MenuItem, State, END_POINT, AUTHORIZATION } from '../const.js';
@@ -128,6 +128,8 @@ export default class Trip {
     this._currentSortType = SortType.Day;
     this._filtersModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newPointFormPresenter.init();
+    document.querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
+    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
   }
 
   _getPoints() {
@@ -140,8 +142,8 @@ export default class Trip {
         return filteredPoints.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
       case SortType.Duration:
         return filteredPoints.sort((a, b) => {
-          a = dateDifference(a.dateTo, a.dateFrom, 'hour');
-          b = dateDifference(b.dateTo, b.dateFrom, 'hour');
+          a = getDateDifference(a.dateTo, a.dateFrom, 'hour');
+          b = getDateDifference(b.dateTo, b.dateFrom, 'hour');
           return a - b;
         });
       case SortType.Price:
@@ -159,6 +161,7 @@ export default class Trip {
     this._currentSortType = sortType;
     this._clearRoute();
     this._renderRoute();
+    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
   }
 
   _renderInfo() {
@@ -166,7 +169,7 @@ export default class Trip {
       remove(this._infoComponent);
     }
     this._infoComponent = new TripInfoView(this._pointsModel.getPoints());
-    render(this._infoContainer, this._infoComponent, renderPosition.AFTERBEGIN);
+    render(this._infoContainer, this._infoComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderTripSiteMenu() {
@@ -194,10 +197,7 @@ export default class Trip {
     this.destroy();
     this._setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.init();
-
     this.createPoint();
-    document.querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
-    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
   }
 
   _renderEmptyListMessage() {
@@ -210,7 +210,7 @@ export default class Trip {
   }
 
   _renderLoading() {
-    render(this._routeContainer, this._loadingComponent, renderPosition.AFTERBEGIN);
+    render(this._routeContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderPoint(point) {

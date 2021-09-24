@@ -1,6 +1,6 @@
 import Abstract from '../view/abstract';
 
-export const renderPosition = {
+export const RenderPosition = {
   BEFOREEND: 'beforeend',
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
@@ -14,7 +14,7 @@ export const createElement = (template) => {
   return newElement.firstElementChild;
 };
 
-export const render = (container, element, place = renderPosition.BEFOREEND) => {
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
   if (container instanceof Abstract) {
     container = container.getElement();
   }
@@ -23,10 +23,10 @@ export const render = (container, element, place = renderPosition.BEFOREEND) => 
     element = element.getElement();
   }
   switch (place) {
-    case renderPosition.BEFOREEND:
+    case RenderPosition.BEFOREEND:
       container.append(element);
       break;
-    case renderPosition.AFTERBEGIN:
+    case RenderPosition.AFTERBEGIN:
       container.prepend(element);
       break;
   }

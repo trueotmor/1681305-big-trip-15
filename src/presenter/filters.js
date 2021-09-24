@@ -45,6 +45,7 @@ export default class Filters {
     }
 
     this._filtersModel.setFilter(UpdateType.MAJOR, filterType);
+    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
   }
 
   _getFilters() {

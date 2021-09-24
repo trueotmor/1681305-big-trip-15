@@ -47,15 +47,6 @@ export default class Points extends AbstractObserver {
     this._notify(updateType);
   }
 
-  // parsePointToData(point) {
-  //   return Object.assign({}, point);
-  // }
-
-  // parseDataToPoint(data) {
-  //   data = Object.assign({}, data);
-  //   return data;
-  // }
-
   parsePointToData(point) {
     const data = Object.assign({}, JSON.parse(JSON.stringify(point)), {
       isDisabled: false,

@@ -5,6 +5,7 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart.js';
 import { getTripDurationFormat, getUniqueItems, countMoneyOfPointsByType, countPointsByType, countTimeOfPointsByType } from '../utils/utils.js';
+import { TIME_FACTOR, MINUTES_PER_DAY, MINUTES_PER_HOUR } from '../const.js';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -196,7 +197,7 @@ const renderTimeChart = (timeCtx, points) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          formatter: (val) => `${dayjs.utc(val).format(getTripDurationFormat(val / 60000))}`,
+          formatter: (val) => `${dayjs.utc(val).format(getTripDurationFormat(val / TIME_FACTOR, MINUTES_PER_DAY, MINUTES_PER_HOUR))}`,
         },
       },
       title: {

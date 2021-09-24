@@ -1,11 +1,11 @@
 import flatpickr from 'flatpickr';
-require('flatpickr/dist/themes/material_blue.css');
 
 import PointDescriptionView from './trip-point-description.js';
 import SmartView from '../smart.js';
 import PointOffersView from './trip-point-offers.js';
 
 import '../../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../../node_modules/flatpickr/dist/themes/material_blue.css';
 
 import dayjs from 'dayjs';
 import he from 'he';
@@ -263,7 +263,11 @@ export default class TripPointFormView extends SmartView {
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
-    this.updateData({ type: evt.target.value, offers: [] });
+    this.updateData({
+      type: evt.target.value,
+      offers: [],
+      offersList: Object.assign([], this._offersModel.getOffers().find((item) => item.type === evt.target.value).offers),
+    });
   }
 
   _townToggleHandler(evt) {

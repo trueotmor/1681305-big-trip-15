@@ -49,7 +49,7 @@ export const State = {
 };
 
 export const BLANK_POINT = {
-  type: 'bus',
+  type: 'train',
   basePrice: 0,
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate(),
@@ -58,8 +58,18 @@ export const BLANK_POINT = {
   isFavorite: false,
 };
 
+export const MINUTES_PER_HOUR = 60;
+
+export const MINUTES_PER_DAY = 1440;
+
+export const MILLISECONDS_PER_DAY = 86400000;
+
+export const MILLISECONDS_PER_SECOND = 1000;
+
+export const TIME_FACTOR = 60000;
+
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 
 export const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 
-export const AUTHORIZATION = 'Basic GhtU4AvU4anfZ666';
+export const AUTHORIZATION = 'Basic GhtU4AvU4anf666';

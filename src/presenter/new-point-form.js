@@ -1,5 +1,5 @@
 import TripPointFormView from '../view/trip-point-form/trip-point-form.js';
-import { remove, render, renderPosition } from '../utils/render.js';
+import { remove, render, RenderPosition } from '../utils/render.js';
 import { UserAction, UpdateType, BLANK_POINT } from '../const.js';
 
 export default class NewPointForm {
@@ -26,7 +26,7 @@ export default class NewPointForm {
     this._pointFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._pointFormComponent.setDeleteHandler(this._handleDeleteClick);
 
-    render(this._container, this._pointFormComponent, renderPosition.AFTERBEGIN);
+    render(this._container, this._pointFormComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
   }
